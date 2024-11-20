@@ -1,0 +1,33 @@
+[
+    {
+      "title": "Twitter Bookmarks",
+      "description": "Use all the knowledge you've saved on Twitter to train your own supermemory.",
+      "icon": "<Album />"
+    },
+    {
+      "title": "Powerful search",
+      "description": "Look up anything you've saved in your supermemory, and get the information you need in seconds.",
+      "icon": "search"
+    },
+    {
+      "title": "Chat with collections",
+      "description": "Use collections to talk to specific knowledgebases like 'My twitter bookmarks', or 'Learning web development'.",
+      "icon": "message-circle"
+    },
+    {
+      "title": "Knowledge canvas",
+      "description": "Arrange your saved information in a way that makes sense to you in a 2D canvas.",
+      "icon": "layout"
+    },
+    {
+      "title": "Just... bookmarks",
+      "description": "AI is cool, but sometimes you just need a place to save your stuff. Supermemory is that place.",
+      "icon": "folder"
+    },
+    {
+      "title": "Writing assistant",
+      "description": "Use our markdown editor to write content based on your saved data, with the help of AI.",
+      "icon": "edit-3"
+    }
+  ]
+  
