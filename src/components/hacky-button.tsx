@@ -1,8 +1,6 @@
-'use client'
 
 import { useRef, useState } from "react";
 // import { FiLock } from "react-icons/fi";
-import {Github, Lock, MoveUpRight} from 'lucide-react'
 import { motion } from "framer-motion";
 
 const HackyButton = ({text}: {text:string}) => {

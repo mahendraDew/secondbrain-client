@@ -76,8 +76,8 @@ export default function HeroSection() {
                 Get Started
               </button>
             </a> */}
-
-            <a href="/signup">
+            {/* /signup */}
+            <a href="/">
              <HackyButton text={"Get Started"}/>
             </a>
 

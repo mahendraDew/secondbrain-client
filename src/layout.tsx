@@ -1,37 +1,12 @@
 import React from "react";
-import { ThemeProvider } from "./components/theme-provider"; // Ensure the correct path to your ThemeProvider
-import { BrainCircuit } from "lucide-react";
+import { ThemeProvider } from "./components/theme-provider"; 
 import FloatingNav from "./components/ui/floating-navbar";
 import { navItems } from "./site/nav";
-// import "./globals.css"; // Global styles
-import "./fonts.css"; // Import fonts.css for the custom fonts
+
+import "./fonts.css"; 
 import "./index.css"
 
 
-// const inter = Inter({ subsets: ["latin"] });
-
-// export const metadata = {
-//   title: "Secondbrain",
-//   description: "a place where farms comes to reality",
-// };
-
-// const fontHeading = localFont({
-//   src: "../../public/assets/fonts/CalSans-SemiBold.ttf",
-//   variable: "--font-heading",
-// });
-// const fontHeadingAlt = localFont({
-//   src: "../../public/assets/fonts/cd-semi.otf",
-//   variable: "--font-headingAlt",
-// });
-
-// const fontSubHeading = localFont({
-//   src: "../../public/assets/fonts/product-font.ttf",
-//   variable: "--font-subheading",
-// });
-// const fontSubAlt = localFont({
-//   src: "../../public/assets/fonts/jakarta.ttf",
-//   variable: "--font-subalt",
-// });
 
 interface RootLayoutProps {
     children: React.ReactNode;
@@ -39,19 +14,10 @@ interface RootLayoutProps {
 const MainLayout = ({ children }: RootLayoutProps) => {
     return (
 
-        // <div className="antialiased overflow-x-hidden overflow-y-auto h-[100%] relative h-full w-full bg-slate-950 text-slate-900 dark:text-slate-50">
-        // <div className="absolute bottom-0 left-[-10%] right-0 top-[-10%] h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]"></div>
-        // <div className="absolute bottom-0 right-[-10%] top-[-5%] h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]"></div>
-  
-        
-        // <div
-        //     //from-black to-purple-950 text-slate-900
-        //     // prev bg - from-black to-purple-950
-        //     className={`antialiased  overflow-x-hidden overflow-y-auto h-[100%]  relative h-full w-full bg-slate-950     text-slate-900 dark:text-slate-50 ${inter.className} ${fontHeading.variable} ${fontSubHeading.variable} ${fontHeadingAlt.variable} ${fontSubAlt.variable}  `}
-        // >
+     
         <div
-        className={`antialiased z-0 overflow-x-hidden overflow-y-auto h-[100%] relative h-full w-full bg-slate-950 text-slate-900 dark:text-slate-50
-          font-subheading`} // Apply the font class globally
+        className={`antialiased z-0 overflow-x-hidden overflow-y-auto  relative h-full w-full bg-slate-950 text-slate-900 dark:text-slate-50
+          font-subheading`}
       >
             <div className="absolute bottom-0 left-[-10%] right-0 top-[-10%] h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]"></div>
             <div className="absolute bottom-0 right-[-10%] top-[-5%] h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]"></div>
