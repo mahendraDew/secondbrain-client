@@ -1,5 +1,4 @@
-"use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   AnimatePresence,
   motion,
@@ -7,7 +6,6 @@ import {
   useScroll,
 } from "framer-motion";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
  const StaticNavBar = ({
   navItems,
   className,
@@ -24,7 +22,8 @@ import Link from "next/link";
   const [visible, setVisible] = useState(false);
 
   useMotionValueEvent(scrollYProgress, "change", (current) => {
-    let direction = current - scrollYProgress.getPrevious();
+    let direction = current - scrollYProgress.get() ? scrollYProgress.getPrevious() : 0;
+    direction = direction || 0;
 
     if (scrollYProgress.get() < 0.05) {
       setVisible(false);
@@ -56,7 +55,7 @@ import Link from "next/link";
         )}
       >
         {navItems.map((navItem: any, idx: number) => (
-          <Link
+          <a
             key={`link=${idx}`}
             href={navItem.link}
             className={cn(
@@ -65,7 +64,7 @@ import Link from "next/link";
           >
             {/* <span className="block sm:hidden">{navItem.icon}</span> */}
             <span className="hidden text-sm sm:block">{navItem.name}</span>
-          </Link>
+          </a>
         ))}
         <button className="relative py-2 px-4 text-sm font-medium text-black rounded-full border dark:text-white border-neutral-200 dark:border-white/[0.2]">
           <span>Login</span>

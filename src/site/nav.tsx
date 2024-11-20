@@ -1,5 +1,5 @@
 // import { IconHome, IconMessage, IconUser } from "@tabler/icons-react";
-import { Home, MessageCircle, User } from "lucide-react";
+import { Home, User } from "lucide-react";
 export const navItems = [
 {
     name: "Home",

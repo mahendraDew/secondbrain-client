@@ -1,5 +1,5 @@
 import HackyButton from "./hacky-button";
-import { EvervaultCard, Icon } from "./ui/card-binary";
+import { Icon } from "./ui/card-binary";
 
 export default function Supercharge() {
   return (

@@ -1,8 +1,8 @@
 // import React from "react";
 import { EvervaultCard, Icon } from "../ui/card-binary";
-import { Separator } from "./separator";
+// import { Separator } from "./separator";
 // import Link from "next/link";
-import ButtonStd from "./button-std";
+// import ButtonStd from "./button-std";
 // import HackyButton from "../hacky-button";
 
 type PostCardProps = {

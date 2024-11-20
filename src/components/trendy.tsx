@@ -55,6 +55,7 @@ const Trendy = () => {
           <div className='grid gap-10 sm:grid-cols-3'>
             {cards.map((post, index) => (
               <PostCard
+                key={index}
                 title={post.title}
                 description={post.description!}
                 icon={post.icon}

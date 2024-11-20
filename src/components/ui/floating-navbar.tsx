@@ -1,5 +1,4 @@
-"use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   AnimatePresence,
   motion,
@@ -12,15 +11,13 @@ import { Icon } from "./card-binary";
 import { BrainCircuit } from "lucide-react";
 import Feeder from "./feeder";
 const FloatingNav = ({
-  navItems,
-  className,
+  navItems
 }: {
   navItems: {
     name: string;
     link: string;
     icon?: JSX.Element;
   }[];
-  className?: string;
 }) => {
   const { scrollYProgress } = useScroll();
 
