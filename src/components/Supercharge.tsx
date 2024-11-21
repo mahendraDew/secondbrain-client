@@ -19,7 +19,9 @@ export default function Supercharge() {
                     Start using Supermemory now and unlock your second brain.
                     </p>
                 </div>
-                <HackyButton text={"Get Started"}/>
+                <a href={"/signup"}>
+                  <HackyButton text={"Get Started"}/>
+                </a>
             </div>
             
             {/* <ButtonStd route={props.icon} text="Read More" /> */}

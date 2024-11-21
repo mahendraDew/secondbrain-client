@@ -1,9 +1,12 @@
 import { ThemeProvider } from "@/components/theme-provider"
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Landing from './pages/Landing';
-import Signup from './pages/Signup';
-import Signin from './pages/Signin';
+import SignUp from './pages/Signup';
+import SignIn from './pages/Signin';
 import Error from './pages/Error';
+import Dashboard from "./pages/Dashboard";
+import Tos from "./pages/Tos";
+import PrivacyPolicy from "./pages/Privacy";
 
 
 function App() {
@@ -16,9 +19,11 @@ function App() {
         {/* Define navigation routes */}
         <Routes>
           <Route path="/" element={<Landing />} />        
-          <Route path="/home" element={<Landing />} />        
-          <Route path="/signup" element={<Signup />} />        
-          <Route path="/signin" element={<Signin />} />        
+          <Route path="/home" element={<Dashboard />} />        
+          <Route path="/signup" element={<SignUp />} />        
+          <Route path="/signin" element={<SignIn />} />        
+          <Route path="/tos" element={<Tos/>} />        
+          <Route path="/privacy" element={<PrivacyPolicy />} />        
           <Route path="*" element={<Error />} /> 
           {/* Add more routes as needed */}
         </Routes>

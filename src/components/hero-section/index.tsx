@@ -18,7 +18,7 @@ export default function HeroSection() {
     show: { opacity: 1, y: 0, transition: { type: "spring" } },
   };
   return (
-    <div className="mx-auto max-w-6xl mt-24 px-6 lg:px-8 bg-transparent relative pt-24">
+    <div className="mx-auto max-w-6xl mt-24 px-6 lg:px-8 bg-transparent relative pt-24 pb-10">
       <div className="max-w-4xl absolute">
         <Spotlight fill="#9284D4" />
       </div>
@@ -77,7 +77,7 @@ export default function HeroSection() {
               </button>
             </a> */}
             {/* /signup */}
-            <a href="/">
+            <a href="/signup">
              <HackyButton text={"Get Started"}/>
             </a>
 

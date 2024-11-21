@@ -48,6 +48,9 @@ const Trendy = () => {
         />
       </h1>
       <Separator />
+      <div className='flex items-center justify-center text-center'>
+      <p>Secondbrain offers all the vital building blocks you need to transform your gold mine of content into a powerful knowledgebase for yourself, your team or even a group of friends!</p>
+      </div>
 
       <div className='relative flex flex-col items-center gap-4 md:flex-row md:justify-between md:gap-8 mt-24'>
         {/* <hr className='my-8' /> */}

@@ -5,6 +5,7 @@ import { navItems } from "./site/nav";
 
 import "./fonts.css"; 
 import "./index.css"
+import { BrainCircuit } from "lucide-react";
 
 
 
@@ -24,12 +25,13 @@ const MainLayout = ({ children }: RootLayoutProps) => {
 
             <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
                 <div className="container mx-auto py-[-50px] px-0">
-                    <header>
-                        {/* <div className="ps-10 pt-5">
-                            <BrainCircuit size={64} />
-                        </div> */}
+                    {/* <header>
                         <FloatingNav navItems={navItems} />
-                    </header>
+                    </header> */}
+                    <div className="w-24 h-24">
+                        <BrainCircuit className="h-full w-full" />
+                    </div>
+
                     <main>{children}</main>
                     <footer className=" py-3 text-center">
                       <p className="text-gray-600">&copy; 2024 secondbrain. All rights reserved. build by <a href="https://x.com/mahendra_dew" className="underline hover:text-white transition-colors">Mahendra</a></p>
