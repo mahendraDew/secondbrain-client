@@ -7,6 +7,7 @@ import FloatingNav from '@/components/ui/floating-navbar';
 // import { BackgroundBeamsDemo } from "@/components/ui/background-beam";
 import { navItems } from "../site/nav";
 import { TabsComp } from '@/components/Tabs';
+import Footer from '@/components/Footer';
 
 
 export default function Landing () {
@@ -31,6 +32,7 @@ export default function Landing () {
         <div className=' h-[40rem] w-full mb-24 mt-40'><Supercharge /></div>
 
       </div>
+      <Footer />
     </div>
   )
 }

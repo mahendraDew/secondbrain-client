@@ -68,7 +68,7 @@ export const EncryptButton = (props: wordProps) => {
       }}
       onMouseEnter={scramble}
       onMouseLeave={stopScramble}
-      className="group relative overflow-hidden rounded-3xl bg-transparent no-underline group cursor-pointer relative shadow-2xl shadow-zinc-900 rounded-full text-xs font-semibold leading-6  text-white inline-block  border-[1px] border-slate-500 px-4 py-2 font-mono font-medium uppercase text-slate-300 transition-colors hover:text-indigo-300"
+      className="group relative overflow-hidden rounded-3xl bg-transparent no-underline group cursor-pointer shadow-2xl shadow-zinc-900 text-xs font-semibold leading-6  text-white inline-block  border-[1px] border-slate-500 px-4 py-2 font-mono font-medium uppercase text-slate-300 transition-colors hover:text-indigo-300"
     >
       <div className="relative z-10 flex items-center gap-2">
         <span>{text}</span>

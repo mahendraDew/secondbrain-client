@@ -1,16 +1,15 @@
-
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { IconBrandGoogleFilled } from '@tabler/icons-react';
 import { Loader2, Loader2Icon } from 'lucide-react';
-import { useState } from 'react';
+import { IconBrandGoogleFilled } from '@tabler/icons-react';
 
-export default function SignIn() {
+export default function SignUp() {
   const [isLoading, setIsLoading] = useState(false);
 
-  async function onSubmit(event:any) {
-    event.preventDefault();
+  async function onSubmit(e:any) {
+    e.preventDefault();
     setIsLoading(true);
 
     setTimeout(() => {
@@ -19,21 +18,20 @@ export default function SignIn() {
   }
 
   return (
-    <div className="container relative min-h-screen flex flex-col items-center justify-center lg:max-w-none lg:px-0">
+    <div className="container min-h-screen flex flex-col justify-center items-center  lg:max-w-none lg:px-0">
      
       <div className="lg:p-8">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
           <div className="flex flex-col space-y-2 text-center">
             <h1 className="text-2xl font-semibold tracking-tight bg-gradient-to-tr  from-purple-300/80 to-white/90 bg-clip-text text-transparent">Welcome back</h1>
             <p className="text-sm text-muted-foreground">
-              Enter your email to sign in to your account
-            </p>
+            Enter your email to sign in to your account            </p>
           </div>
           <div className="grid gap-6">
             <form onSubmit={onSubmit}>
               <div className="grid gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">Email</Label>
                   <Input
                     id="email"
                     placeholder="name@example.com"
@@ -79,8 +77,19 @@ export default function SignIn() {
               Google
             </Button>
           </div>
-          <p className="px-8 text-center text-sm text-muted-foreground ">
-            <a
+          <p className="px-8 text-center text-sm text-muted-foreground">
+            By signing-in, you agree to our{" "}
+            <a href="/tos" className="hover:text-brand underline underline-offset-4">
+              Terms of Service
+            </a>{" "}
+            and{" "}
+            <a href="/privacy" className="hover:text-brand underline underline-offset-4">
+              Privacy Policy
+            </a>
+            .
+          </p>
+          <p className="px-8 text-center text-sm text-muted-foreground">
+          <a
               href="/signup"
               className="hover:text-brand underline underline-offset-4"
             >

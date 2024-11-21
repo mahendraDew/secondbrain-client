@@ -16,7 +16,7 @@ export default function Supercharge() {
                     Supercharge your bookmarks today.
                     </h2>
                     <p className="text-xl font-light  text-black dark:text-white px-2 py-0.5">
-                    Start using Supermemory now and unlock your second brain.
+                    Start using your <span className="text-purple-100">secondbrain</span> now and unlock your second brain.
                     </p>
                 </div>
                 <a href={"/signup"}>

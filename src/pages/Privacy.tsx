@@ -1,13 +1,19 @@
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
+import Footer from '@/components/Footer';
+import FloatingNav from '@/components/ui/floating-navbar';
+import { navItems } from '@/site/nav';
 
 const PrivacyPolicy: React.FC = () => {
   return (
-    <div className="min-h-screen  flex flex-col">
-      <header className="px-4 lg:px-6 h-14 flex items-center">
-        <a href="/" className="flex items-center justify-center">
-          <ArrowLeft className="h-6 w-6  mr-2" />
-          <span className="text-lg font-semibold">Back to Home</span>
+    <>
+    
+      <FloatingNav navItems={navItems} />
+    <div className="min-h-screen bg-transparent flex flex-col justify-center items-center mt-20 z-10">
+      <header className="max-w-5xl w-full px-4 md:px-2 h-14 flex items-center ">
+        <a href={"/"} className="">
+         <span><ArrowLeft  /></span> 
+          {/* <span className="text-lg">Home</span> */}
         </a>
       </header>
       <main className="max-w-5xl flex-grow container mx-auto px-4 py-8">
@@ -44,8 +50,9 @@ const PrivacyPolicy: React.FC = () => {
           </p>
         </div>
       </main>
-    
+      <Footer />
     </div>
+    </>
   );
 };
 
