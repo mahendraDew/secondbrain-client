@@ -17,6 +17,15 @@ import { Button } from './ui/button'
 import { Separator } from './ui/separator'
 import Thoughtcard from './Thoughtcard'
 import { thoughtData } from '@/data/thoughdata'
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalTitle,
+  ModalDescription,
+  ModalFooter,
+  ModalClose,
+} from "./ui/model"
 
 export function SidebarComp () {
   const links = [
@@ -134,17 +143,27 @@ export const LogoIcon = () => {
 
 // Dummy dashboard component with content
 const Dashboard = () => {
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+
+
+  const openCreateModal = () => setIsCreateModalOpen(true);
+  const closeCreateModal = () => setIsCreateModalOpen(false);
+  const openShareModal = () => setIsShareModalOpen(true);
+  const closeShareModal = () => setIsShareModalOpen(false);
+
   return (
     <div className='flex flex-1'>
       <div className='p-2 md:p-10 rounded-tl-2xl  bg-transparent flex flex-col gap-2 flex-1 w-full h-full'>
         <div className='flex gap-2'>
           <div className='h-20 w-full rounded-lg  flex justify-between items-center '>
             <div>
-              <h1 className='text-xl md:text-3xl'>All thoughts</h1>
+              <h1 className='text-xl md:text-3xl'>My brain</h1>
             </div>
             <div className='flex gap-5'>
               <a href='#new'>
                 <Button
+                  onClick={openCreateModal}
                   variant={'ghost'}
                   className='flex justify-center items-center gap-1 text-center rounded-md bg-transparent no-underline cursor-pointer shadow-2xl leading-6  text-white  border-[1px] border-slate-500 px-4 py-2 font-mono font-medium transition-colors hover:text-indigo-300'
                 >
@@ -153,13 +172,42 @@ const Dashboard = () => {
                 </Button>
               </a>
               <a href='#share'>
-                <Button >
+                <Button 
+                  onClick={openShareModal}
+                >
                   <Share2 />
                   Share
                 </Button>
               </a>
             </div>
           </div>
+           <Modal open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
+          <ModalContent>
+            <ModalHeader>
+              <ModalTitle>Create New</ModalTitle>
+              <ModalDescription>This is create modal</ModalDescription>
+            </ModalHeader>
+            <ModalFooter>
+              <ModalClose asChild>
+                <Button>Close</Button>
+              </ModalClose>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+
+        <Modal open={isShareModalOpen} onOpenChange={setIsShareModalOpen}>
+          <ModalContent>
+            <ModalHeader>
+              <ModalTitle>Share</ModalTitle>
+              <ModalDescription>This is share modal</ModalDescription>
+            </ModalHeader>
+            <ModalFooter>
+              <ModalClose asChild>
+                <Button>Close</Button>
+              </ModalClose>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
         </div>
         <Separator />
         <div className='flex gap-2 flex-1'>
