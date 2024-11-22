@@ -50,7 +50,7 @@ export default function SignUp() {
                     disabled={isLoading}
                   />
                 </div>
-                <Button className="bg-[#5E43EC] hover:bg-[#4930c9] text-gray-100" disabled={isLoading}>
+                <Button type='submit' className="bg-[#5E43EC] hover:bg-[#4930c9] text-gray-100" disabled={isLoading}>
                   {isLoading && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}

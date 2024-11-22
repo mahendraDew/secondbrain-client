@@ -1,7 +1,7 @@
 // import HeroSection from "@/components/hero-section";
 import HeroSection from '@/components/hero-section'
 import Trendy from '@/components/trendy'
-import Lamper from "@/components/lamp";
+// import Lamper from "@/components/lamp";
 import Supercharge from '@/components/Supercharge';
 import FloatingNav from '@/components/ui/floating-navbar';
 // import { BackgroundBeamsDemo } from "@/components/ui/background-beam";

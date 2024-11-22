@@ -5,10 +5,10 @@ import { Img } from 'react-image'
 import { cn } from '@/lib/utils'
 import {
   BrainCircuit,
+  Copy,
   FileText,
   Hash,
   Link,
-  Loader2,
   Plus,
   Share2,
   Twitter,
@@ -24,12 +24,9 @@ import {
   ModalHeader,
   ModalTitle,
   ModalDescription,
-  ModalFooter,
-  ModalClose,
-} from "./ui/model"
-import { Input } from './ui/input'
+} from './ui/model'
 
-export function SidebarComp() {
+export function SidebarComp () {
   const links = [
     {
       label: 'Tweets',
@@ -110,7 +107,7 @@ export function SidebarComp() {
 export const Logo = () => {
   return (
     <a
-      href='#'
+      href={"/"}
       className='font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20'
     >
       {/* add logo here */}
@@ -131,7 +128,7 @@ export const Logo = () => {
 export const LogoIcon = () => {
   return (
     <a
-      href='#'
+      href='/'
       className='font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20'
     >
       {/* add logo here */}
@@ -145,55 +142,54 @@ export const LogoIcon = () => {
 
 // Dummy dashboard component with content
 const Dashboard = () => {
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
+  const openCreateModal = () => setIsCreateModalOpen(true)
+  const closeCreateModal = () => setIsCreateModalOpen(false)
+  const openShareModal = () => setIsShareModalOpen(true)
+  const closeShareModal = () => setIsShareModalOpen(false)
 
-  const openCreateModal = () => setIsCreateModalOpen(true);
-  const closeCreateModal = () => setIsCreateModalOpen(false);
-  const openShareModal = () => setIsShareModalOpen(true);
-  const closeShareModal = () => setIsShareModalOpen(false);
-
-
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10)); // Current date as default
-  const [tags, setTags] = useState<string[]>([]);
-  const [tagInput, setTagInput] = useState('');
-  const [type, setType] = useState('tweet');
+  const [title, setTitle] = useState('')
+  const [description, setDescription] = useState('')
+  const [date] = useState(new Date().toISOString().slice(0, 10)) // Current date as default
+  const [tags, setTags] = useState<string[]>([])
+  const [tagInput, setTagInput] = useState('')
+  const [type, setType] = useState('tweet')
 
   const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && tagInput.trim() !== '') {
-      setTags([...tags, tagInput.trim()]);
-      setTagInput('');
-      e.preventDefault();
+      setTags([...tags, tagInput.trim()])
+      setTagInput('')
+      e.preventDefault()
     }
-  };
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     // Handle form submission, send data to the dashboard or backend
-    console.log({ title, description, date, tags, type });
-    onClose(); // Close the modal after submission
-  };
+    console.log({ title, description, date, tags, type })
+    onClose() // Close the modal after submission
+  }
 
   const onClose = () => {
-    console.log("close")
+    setIsCreateModalOpen(false);
+    setIsShareModalOpen(false);
   }
 
   const handleRemoveTag = (index: number) => {
-    setTags(tags.filter((_, i) => i !== index));
-  };
+    setTags(tags.filter((_, i) => i !== index))
+  }
 
 
-  function onSubmit() {
-    console.log("submit")
+  const shareBrain = () =>{
+    console.log("share brain")
   }
 
   return (
     <div className='flex flex-1'>
-      <div className='p-2 md:p-10 rounded-tl-2xl  bg-transparent flex flex-col gap-2 flex-1 w-full h-full'>
+      <div className='p-10 md:p-10 rounded-tl-2xl  bg-transparent flex flex-col gap-2 flex-1 w-full h-full'>
         <div className='flex gap-2'>
           <div className='h-20 w-full rounded-lg  flex justify-between items-center '>
             <div>
@@ -211,9 +207,7 @@ const Dashboard = () => {
                 </Button>
               </a>
               <a href='#share'>
-                <Button
-                  onClick={openShareModal}
-                >
+                <Button onClick={openShareModal}>
                   <Share2 />
                   Share
                 </Button>
@@ -224,80 +218,105 @@ const Dashboard = () => {
             <ModalContent>
               <ModalHeader>
                 <ModalTitle>New Thought</ModalTitle>
-                <ModalDescription>Save your new thought before you forget it</ModalDescription>
-                <form onSubmit={onSubmit} className="text-white px-4 sm:px-6 md:px-8 lg:px-10 py-4">
+                <ModalDescription>
+                  Save your new thought before you forget it
+                </ModalDescription>
+                <form
+                  onSubmit={handleSubmit}
+                  className='text-white px-4 sm:px-6 md:px-8 lg:px-10 py-4'
+                >
                   {/* Title */}
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-500">Title:</label>
+                  <div className='mb-4'>
+                    <label className='block text-sm font-medium text-gray-500 mb-1'>
+                      Title:
+                    </label>
                     <input
-                      type="text"
-                      className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent"
+                      type='text'
+                      className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
                       value={title}
-                      onChange={(e) => setTitle(e.target.value)}
+                      onChange={e => setTitle(e.target.value)}
                       required
                     />
                   </div>
 
                   {/* Description */}
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-500">Description:</label>
+                  <div className='mb-4'>
+                    <label className='block text-sm font-medium text-gray-500 mb-1'>
+                      Description:
+                    </label>
                     <textarea
-                      className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent"
+                      className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
                       rows={3}
                       value={description}
-                      onChange={(e) => setDescription(e.target.value)}
+                      onChange={e => setDescription(e.target.value)}
                       required
                     ></textarea>
                   </div>
 
                   {/* Type Selection */}
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-500">Type:</label>
+                  <div className='mb-4'>
+                    <label className='block text-sm font-medium text-gray-500 mb-1'>
+                      Type:
+                    </label>
                     <select
-                      className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent"
+                      className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
                       value={type}
-                      onChange={(e) => setType(e.target.value)}
+                      onChange={e => setType(e.target.value)}
                     >
-                      <option value="tweet" className="bg-slate-950">Tweet</option>
-                      <option value="video" className="bg-slate-950">Video</option>
-                      <option value="link" className="bg-slate-950">Link</option>
-                      <option value="image" className="bg-slate-950">Image</option>
-                      <option value="article" className="bg-slate-950">Article</option>
+                      <option value='tweet' className='bg-slate-950'>
+                        Tweet
+                      </option>
+                      <option value='video' className='bg-slate-950'>
+                        Video
+                      </option>
+                      <option value='link' className='bg-slate-950'>
+                        Link
+                      </option>
+                      <option value='image' className='bg-slate-950'>
+                        Image
+                      </option>
+                      <option value='article' className='bg-slate-950'>
+                        Article
+                      </option>
                     </select>
                   </div>
 
                   {/* Date */}
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-500">Date:</label>
-                    <div className="mt-1 w-full px-3 py-2 border rounded-lg shadow-sm bg-transparent dark:text-white">
+                  <div className='mb-4'>
+                    <label className='block text-sm font-medium text-gray-500 mb-1'>
+                      Date:
+                    </label>
+                    <div className='mt-1 w-full px-3 py-2 border rounded-lg shadow-sm bg-transparent dark:text-white'>
                       {date}
                     </div>
                   </div>
 
                   {/* Tags */}
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-500">Tags:</label>
-                    <div className="flex items-center gap-2">
+                  <div className='mb-4'>
+                    <label className='block text-sm font-medium text-gray-500 mb-1'>
+                      Tags:
+                    </label>
+                    <div className='flex items-center gap-2'>
                       <input
-                        type="text"
-                        className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent"
+                        type='text'
+                        className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
                         value={tagInput}
-                        onChange={(e) => setTagInput(e.target.value)}
+                        onChange={e => setTagInput(e.target.value)}
                         onKeyDown={handleAddTag}
-                        placeholder="Add tags and press Enter"
+                        placeholder='Add tags and press Enter'
                       />
                     </div>
-                    <div className="flex flex-wrap mt-2 gap-2">
+                    <div className='flex flex-wrap mt-2 gap-2'>
                       {tags.map((tag, index) => (
                         <div
                           key={index}
-                          className="flex items-center bg-purple-400/20 px-2 py-1 rounded-lg text-sm"
+                          className='flex items-center bg-purple-400/10 px-2 py-1 rounded-lg text-sm'
                         >
                           {tag}
                           <button
-                            type="button"
+                            type='button'
                             onClick={() => handleRemoveTag(index)}
-                            className="ml-2 text-red-600 hover:text-red-800"
+                            className='ml-2 text-red-600 hover:text-red-800'
                           >
                             &times;
                           </button>
@@ -307,23 +326,16 @@ const Dashboard = () => {
                   </div>
 
                   {/* Submit Button */}
-                  <div className="flex flex-col sm:flex-row justify-end gap-2">
-
+                  <div className='flex flex-col sm:flex-row justify-end gap-2'>
                     <Button
                       onClick={closeCreateModal}
                       variant={'ghost'}
                       className='flex justify-center items-center gap-1 text-center rounded-md bg-transparent no-underline cursor-pointer shadow-2xl leading-6  text-white  border-[1px] border-slate-500 px-4 py-2 font-mono font-medium transition-colors hover:text-indigo-300'
                     >
-
                       Cancel
                     </Button>
-                   
-                    <Button
-                      type='submit'
-                      onClick={openShareModal}
-                    >
-                      Create
-                    </Button>
+
+                    <Button type='submit'>Create</Button>
                   </div>
                 </form>
 
@@ -332,31 +344,34 @@ const Dashboard = () => {
                   <button>button</button>
                 </div> */}
               </ModalHeader>
-
             </ModalContent>
           </Modal>
 
           <Modal open={isShareModalOpen} onOpenChange={setIsShareModalOpen}>
             <ModalContent>
-              <ModalHeader>
-                <ModalTitle>Share</ModalTitle>
-                <ModalDescription>This is share modal</ModalDescription>
+              <ModalHeader className='flex gap-3'>
+                <ModalTitle>Share Your Second Brain</ModalTitle>
+                <ModalDescription className='flex flex-col gap-3'>
+                  <span>
+                    Share your entire collection of notes, documents, tweets,
+                    and videos with others. They&apos;ll be able to import your
+                    content into their own second brain.{' '}
+                  </span>
+                    <Button className='w-full bg-purple-200' onClick={shareBrain}>
+                    <Copy />
+                    Share brain
+                    </Button>
+                </ModalDescription>
               </ModalHeader>
-              <ModalFooter>
-                <ModalClose asChild>
-                  <Button>Close</Button>
-                </ModalClose>
-              </ModalFooter>
             </ModalContent>
           </Modal>
         </div>
         <Separator />
-        <div className='flex gap-2 flex-1'>
-          <div
-            className='h-full w-full rounded-lg bg-slate-800/20 p-10  '
-          >
-            
+        <div className='flex gap-2 flex-1 h-full overflow-y-auto bg-slate-800/20 p-5'>
+          <div className='h-full w-full rounded-lg '>
+
             <Thoughtcard thoughts={thoughtData} />
+
           </div>
         </div>
       </div>

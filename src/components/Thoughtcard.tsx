@@ -33,7 +33,7 @@ const iconMap: { [key: string]: React.ElementType } = {
 export default function Thoughtcard ({ thoughts }: { thoughts: ThoughtProp[] }) {
   return (
     <div>
-      <div className='grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-10'>
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5'>
         {thoughts.map((thought, index) => {
           const IconComponent = iconMap[thought.icon] || FileText // Fallback to a default icon if not found
 
