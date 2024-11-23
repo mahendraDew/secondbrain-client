@@ -3,7 +3,7 @@ import { motion, useInView } from "framer-motion";
 import React from "react";
 import { Button } from "../ui/button";
 import Spotlight from "../ui/Spotlight";
-import { Github } from "lucide-react";
+import { Github, Loader2 } from "lucide-react";
 import { Img } from 'react-image'
 import { Separator } from "@radix-ui/react-separator";
 import HackyButton from "../hacky-button";
@@ -142,7 +142,7 @@ export default function HeroSection() {
           loader={<div>Loading...</div>}
         /> */}
 
-        <Img src="./landing-hero.jpeg" width={1200} height={1200} alt="landing hero img" loader={<div>Loading...</div>} className="md:min-w-xs" />
+        <Img src="./landing-hero.jpeg" width={1200} height={1200} alt="landing hero img" loader={<div className="flex justify-center items-center"><Loader2 className="animate-spin"/></div>} className="md:min-w-xs" />
       </div>
       <Separator />
     </div>

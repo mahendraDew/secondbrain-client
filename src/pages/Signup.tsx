@@ -2,19 +2,64 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, Loader2Icon } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { IconBrandGoogleFilled } from '@tabler/icons-react';
+import { useNavigate } from 'react-router-dom';
+import { ApiRoutes } from '../utils/routeAPI';
+import axios from 'axios';
+
 
 export default function SignUp() {
   const [isLoading, setIsLoading] = useState(false);
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
+
+  const navigate = useNavigate();
 
   async function onSubmit(e:any) {
     e.preventDefault();
     setIsLoading(true);
+    setErrors({});
 
-    setTimeout(() => {
+     // Form validation
+     let newErrors: {[key: string]: string} = {};
+     if (!username.trim()) newErrors.username = "Username is required";
+     if (!email.trim()) newErrors.email = "Email is required";
+     if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = "Email is invalid";
+     if (!password) newErrors.password = "Password is required";
+     if (password.length < 8) newErrors.password = "Password must be at least 8 characters";
+
+     if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       setIsLoading(false);
-    }, 3000);
+      return;
+    }
+
+    // console.log("signup form data: ", username, email, password)
+
+    try {
+      const config = {
+        headers: {
+          'Content-type': "application/json"
+        }
+      }
+      const body = JSON.stringify({username, email, password});
+      const res = await axios.post(ApiRoutes.signup, body, config);
+      
+      if(res.status == 200){
+        // todo: add otpverification route here
+        navigate('/signin')
+      }else {
+        newErrors.email = 'Email Already exists try login in.';
+      }
+      
+      
+    } catch (error) {
+      newErrors.email = "Email already exists try loggin in with this email. Or use different email!";
+      console.log(errors);
+    }
   }
 
   return (
@@ -40,7 +85,10 @@ export default function SignUp() {
                     autoCapitalize="none"
                     autoCorrect="off"
                     disabled={isLoading}
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                   />
+                  {errors.username && <p className="text-sm text-red-500">{errors.username}</p>}
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
@@ -52,7 +100,10 @@ export default function SignUp() {
                     autoComplete="email"
                     autoCorrect="off"
                     disabled={isLoading}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
+                  {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="password">Password</Label>
@@ -60,7 +111,10 @@ export default function SignUp() {
                     id="password"
                     type="password"
                     disabled={isLoading}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
+                  {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
                 </div>
                 <Button className="bg-[#5E43EC] hover:bg-[#4930c9] text-gray-100" disabled={isLoading}>
                   {isLoading && (
@@ -80,12 +134,8 @@ export default function SignUp() {
                 </span>
               </div>
             </div>
-            <Button variant="outline" type="button" disabled={isLoading}>
-              {isLoading ? (
-                <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <IconBrandGoogleFilled className="mr-2 h-4 w-4" />
-              )}{" "}
+            <Button variant="outline" type="button" disabled={isLoading}>              
+              <IconBrandGoogleFilled className=" h-4 w-4" />
               Google
             </Button>
           </div>
