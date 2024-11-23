@@ -18,10 +18,12 @@ export default function SignUp() {
 
   const navigate = useNavigate();
 
-  async function onSubmit(e:any) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setIsLoading(true);
     setErrors({});
+
+    console.log({username, email, password});
 
      // Form validation
      let newErrors: {[key: string]: string} = {};
@@ -47,7 +49,7 @@ export default function SignUp() {
       }
       const body = JSON.stringify({username, email, password});
       const res = await axios.post(ApiRoutes.signup, body, config);
-      
+      console.log(res);
       if(res.status == 200){
         // todo: add otpverification route here
         navigate('/signin')
