@@ -15,19 +15,19 @@ export default function Landing () {
     <div className='w-full flex flex-col justify-center items-center gap-6 font-subalt '>
       <FloatingNav navItems={navItems} />
 
-      <div className='flex flex-col justify-center items-center '>
+      <div className='flex flex-col justify-center items-center max-w-5xl px-5 md:px-0'>
         <HeroSection />
         <div className=' flex justify-center items-center' id='usecase'>
           <Trendy />
         </div>
-        <div className='max-w-full mx-auto  flex flex-col justify-center items-center'>
-          {/* <BackgroundBeamsDemo /> */}
-        </div>
+        {/* <div className='max-w-full mx-auto  flex flex-col justify-center items-center'>
+          <BackgroundBeamsDemo />
+        </div> */}
         {/* <div><Lamper /></div> */}
 
-        <div>
+        {/* <div>
         <TabsComp />
-        </div>
+        </div> */}
         
         <div className=' h-[40rem] w-full mb-24 mt-40'><Supercharge /></div>
 

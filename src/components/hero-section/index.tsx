@@ -132,7 +132,7 @@ export default function HeroSection() {
           </AnimatePresence>
         </motion.div>
       </div> */}
-      <div className=" mt-52">
+      <div className=" mt-52 px-6">
         {/* <Image src={"/public/landing-hero.jpeg"} alt="landing hero img" /> */}
         {/* <Image
           src="/landing-hero.jpeg"
@@ -142,7 +142,7 @@ export default function HeroSection() {
           loader={<div>Loading...</div>}
         /> */}
 
-        <Img src="./landing-hero.jpeg" width={1200} height={1200} alt="landing hero img" loader={<div>Loading...</div>} />
+        <Img src="./landing-hero.jpeg" width={1200} height={1200} alt="landing hero img" loader={<div>Loading...</div>} className="md:min-w-xs" />
       </div>
       <Separator />
     </div>

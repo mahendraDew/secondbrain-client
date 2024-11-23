@@ -55,7 +55,7 @@ const Trendy = () => {
       <div className='relative flex flex-col items-center gap-4 md:flex-row md:justify-between md:gap-8 mt-24'>
         {/* <hr className='my-8' /> */}
         {cards?.length ? (
-          <div className='grid gap-10 sm:grid-cols-3'>
+          <div className='grid gap-10 grid-cols-1 sm:grid-cols-2 md:grid-cols-3'>
             {cards.map((post, index) => (
               <PostCard
                 key={index}

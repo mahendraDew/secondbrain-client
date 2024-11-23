@@ -1,7 +1,5 @@
-'use client'
-
 import { Img } from 'react-image'
-import { Tabs } from './ui/animated-tabs'
+// import { Tabs } from './ui/animated-tabs'
 import { Bookmark, Lightbulb, User } from 'lucide-react'
 import { TextGenerateEffect } from './ui/text-gen'
 import { Separator } from './ui/separator'
@@ -22,7 +20,7 @@ export function TabsComp () {
         //   <DummyContent />
         // </div>
         <Img
-          src='/landing-hero.jpeg'
+          src='/dalle.webp'
           alt='dummy image'
           width='1000'
           height='1000'
@@ -64,7 +62,7 @@ export function TabsComp () {
         //   <DummyContent />
         // </div>
         <Img
-          src='/landing-hero.jpeg'
+          src='/dalle.webp'
           alt='dummy image'
           width='1000'
           height='1000'
@@ -75,7 +73,7 @@ export function TabsComp () {
   ]
 
   return (
-    <div className='h-[40rem] md:h-[70rem] [perspective:1000px] relative b flex flex-col max-w-5xl mx-auto w-full  items-start justify-start  mb-64'>
+    <div className='h-[100rem] relative b flex flex-col max-w-5xl mx-auto w-full  items-start justify-start  mb-64 bg-red-300/20'>
       <div className='flex flex-col gap-5 justify-center items-center container max-w-4xl py-6 lg:py-10 mt-24'>
         <h1 className='relative z-10 text-2xl md:text-7xl font-headingAlt  bg-clip-text text-transparent bg-gradient-to-b from-purple-300/90 to-white/90  text-center font-bold'>
           <TextGenerateEffect
@@ -84,14 +82,14 @@ export function TabsComp () {
           />
         </h1>
         <Separator />
-        <div className='flex items-center justify-center text-center'>
+        <div className='flex items-center justify-center text-center  px-5 md:px-0'>
           <p>
             So you don't have to. Whether you're a student, a professional, or
             just a person on the the internet. we got you covered.
           </p>
         </div>
       </div>
-      <Tabs tabs={tabs} />
+      {/* <Tabs tabs={tabs} /> */}
     </div>
     // <div className="h-[40rem] md:h-[50rem] [perspective:1000px] relative b flex flex-col max-w-5xl mx-auto w-full  items-start justify-start my-40">
 
