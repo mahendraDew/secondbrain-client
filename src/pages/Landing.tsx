@@ -6,7 +6,7 @@ import Supercharge from '@/components/Supercharge';
 import FloatingNav from '@/components/ui/floating-navbar';
 // import { BackgroundBeamsDemo } from "@/components/ui/background-beam";
 import { navItems } from "../site/nav";
-import { TabsComp } from '@/components/Tabs';
+// import { TabsComp } from '@/components/Tabs';
 import Footer from '@/components/Footer';
 
 

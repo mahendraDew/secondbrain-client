@@ -144,12 +144,12 @@ export const LogoIcon = () => {
 const Dashboard = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  // const [isLoading, setIsLoading] = useState(false)
 
   const openCreateModal = () => setIsCreateModalOpen(true)
   const closeCreateModal = () => setIsCreateModalOpen(false)
   const openShareModal = () => setIsShareModalOpen(true)
-  const closeShareModal = () => setIsShareModalOpen(false)
+  // const closeShareModal = () => setIsShareModalOpen(false)
 
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
