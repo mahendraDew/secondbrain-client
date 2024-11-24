@@ -19,7 +19,7 @@ const MainLayout = ({ children }: RootLayoutProps) => {
       <div className='absolute z-[-1] bottom-0 right-[-10%] top-[-5%] h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))] '></div>
       <div className='flex justify-center items-center z-20 '>
         <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
-          <div className="container mx-auto py-[-50px] px-0">
+          <div className=" mx-auto py-[-50px] px-0">
           {/* <header>
                         <FloatingNav navItems={navItems} />
                         </header> */}

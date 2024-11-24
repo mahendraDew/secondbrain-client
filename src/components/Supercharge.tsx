@@ -12,7 +12,7 @@ export default function Supercharge() {
 
             <div className="w-full h-full text-2xl md:text-6xl flex flex-col gap-11 justify-center items-center text-center">
                 <div className="flex flex-col justify-center items-center gap-3">
-                    <h2 className="bg-gradient-to-tr  from-purple-300/80 to-white/90 bg-clip-text text-transparent mt-4 font-light text-2xl md:text-6xl text-center">
+                    <h2 className="bg-gradient-to-tr  from-purple-300/80 to-white/90 bg-clip-text text-transparent mt-4 font-light text-2xl sm:text-4xl md:text-6xl text-center">
                     Supercharge your bookmarks today.
                     </h2>
                     <p className="text-lg md:text-xl font-light  text-black dark:text-white px-2 py-0.5">

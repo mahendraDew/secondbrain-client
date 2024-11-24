@@ -203,13 +203,13 @@ const Dashboard = () => {
                   className='flex justify-center items-center gap-1 text-center rounded-md bg-transparent no-underline cursor-pointer shadow-2xl leading-6  text-white  border-[1px] border-slate-500 px-4 py-2 font-mono font-medium transition-colors hover:text-indigo-300'
                 >
                   <Plus />
-                  Create New
+                  <span className='sm:inline hidden'>Create New</span>
                 </Button>
               </a>
               <a href='#share'>
                 <Button onClick={openShareModal}>
                   <Share2 />
-                  Share
+                  <span className='sm:inline hidden'>Share</span>
                 </Button>
               </a>
             </div>
@@ -349,18 +349,23 @@ const Dashboard = () => {
 
           <Modal open={isShareModalOpen} onOpenChange={setIsShareModalOpen}>
             <ModalContent>
-              <ModalHeader className='flex gap-3'>
+              <ModalHeader className='flex justify-center items-center gap-5'>
                 <ModalTitle>Share Your Second Brain</ModalTitle>
-                <ModalDescription className='flex flex-col gap-3'>
-                  <span>
-                    Share your entire collection of notes, documents, tweets,
-                    and videos with others. They&apos;ll be able to import your
-                    content into their own second brain.{' '}
-                  </span>
-                    <Button className='w-full bg-purple-200' onClick={shareBrain}>
-                    <Copy />
-                    Share brain
-                    </Button>
+                <ModalDescription className='flex gap-7'>
+                  <div className='flex flex-col gap-5'>
+                    <span>
+                      Share your entire collection of notes, documents, tweets,
+                      and videos with others. They&apos;ll be able to import your
+                      content into their own second brain.{' '}
+                    </span>
+                      <Button className='w-full bg-purple-200' onClick={shareBrain}>
+                      <Copy />
+                      Share brain
+                      </Button>
+                  </div>
+                  <div>
+                    <div className='w-32 h-32 bg-black'>QR code</div>
+                  </div>
                 </ModalDescription>
               </ModalHeader>
             </ModalContent>
