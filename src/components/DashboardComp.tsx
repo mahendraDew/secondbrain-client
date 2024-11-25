@@ -7,6 +7,7 @@ import {
     BrainCircuit,
     Copy,
     FileText,
+    Frown,
     Hash,
     Link,
     Plus,
@@ -423,6 +424,7 @@ const Dashboard = () => {
 
                 } catch (error) {
                     console.log("there is some error: ", error)
+                    setServerdown(true);
                 }
             }else{
                 console.log("bhul ja bhaiii")
@@ -433,7 +435,7 @@ const Dashboard = () => {
         fetchUserContents();
     },[newDataUpdated])
 
-    
+    const [serverdown, setServerdown] = useState(false);
 
     return (
         <div className='flex flex-1'>
@@ -694,7 +696,8 @@ const Dashboard = () => {
                 </div>
                 <Separator />
                 <div className='flex gap-2 flex-1 h-full overflow-y-auto bg-slate-800/20 p-5'>
-                   <DashboardContent thoughtData={thoughtData} setThoughtData={setThoughtData} />
+                   
+                   {serverdown ? <div className='w-full flex flex-col justify-center items-center text-sm md:text-lg '><Frown /> server down <p className='text-sm'>try again later!!</p></div>: <DashboardContent thoughtData={thoughtData} setThoughtData={setThoughtData} /> }
                 </div>
             </div>
         </div>
