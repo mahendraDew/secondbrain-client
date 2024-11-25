@@ -1,4 +1,3 @@
-// import { IconHome, IconMessage, IconUser } from "@tabler/icons-react";
 import { BookOpenCheck, Layers, MessageCircle, Pen, Search, Twitter } from "lucide-react";
 export const cards = [
     {

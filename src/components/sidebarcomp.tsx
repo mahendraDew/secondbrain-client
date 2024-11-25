@@ -25,8 +25,10 @@ import {
   ModalTitle,
   ModalDescription,
 } from './ui/model'
+import axios from 'axios'
+import { ApiRoutes } from '@/utils/routeAPI'
 
-export function SidebarComp () {
+export function SidebarComp() {
   const links = [
     {
       label: 'Tweets',
@@ -146,27 +148,137 @@ const Dashboard = () => {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
   // const [isLoading, setIsLoading] = useState(false)
 
-  const openCreateModal = () => setIsCreateModalOpen(true)
-  const closeCreateModal = () => setIsCreateModalOpen(false)
+  //form data (title(string), desc(string), date(date), tags({id,string}), link )
+  const [title, setTitle] = useState('')
+  const [description, setDescription] = useState('')
+  const [date] = useState(new Date().toISOString().slice(0, 10))
+  const [alltagsId, setAlltagsId] = useState<string[]>([])
+  const [type, setType] = useState('tweet')
+  const [link, setLink] = useState('')
+
+  const [tags, setTags] = useState<string[]>([])
+
+  // const [tagInput, setTagInput] = useState('')
+
+  const [alltags, setAllTags] = useState<{ _id: string; title: string }[]>([]);
+  const [inputValue, setInputValue] = useState('');
+  const [filteredTags, setFilteredTags] = useState<{ _id: string; title: string }[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
+
+  const openCreateModal = async () => {
+    setIsCreateModalOpen(true);
+    fetchTags();
+  }
+  const closeCreateModal = () => {
+    setIsCreateModalOpen(false)
+    setSelectedTags([]);
+    setAlltagsId([]);
+  }
+
   const openShareModal = () => setIsShareModalOpen(true)
   // const closeShareModal = () => setIsShareModalOpen(false)
 
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [date] = useState(new Date().toISOString().slice(0, 10)) // Current date as default
-  const [tags, setTags] = useState<string[]>([])
-  const [tagInput, setTagInput] = useState('')
-  const [type, setType] = useState('tweet')
-
-  const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && tagInput.trim() !== '') {
-      setTags([...tags, tagInput.trim()])
-      setTagInput('')
-      e.preventDefault()
+  const fetchTags = async () => {
+    try {
+      const response = await axios.get(ApiRoutes.alltags);
+      console.log(response.data.tags)
+      setAllTags(response.data.tags);
+      setFilteredTags(response.data.tags);
+    } catch (error) {
+      console.error('Error fetching tags:', error);
     }
   }
 
+
+  // Filter tags based on input value
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInputValue(value);
+
+    // Filter tags that match the input (showing max 5 results)
+    const filtered = alltags.filter(tag =>
+      tag.title.toLowerCase().includes(value.toLowerCase())
+    ).slice(0, 5); // Show only top 5 results
+    setFilteredTags(filtered);
+  };
+
+  const createNewTag = async (newTagtitle: string) => {
+    console.log("create new tag called", newTagtitle)
+    try {
+      await axios.post(ApiRoutes.createtag, { title: newTagtitle.toLowerCase() }); // Replace with your endpoint
+      // setAllTags([...alltags, { _id: Date.now().toString(), title: newTagtitle.toLowerCase() }]);
+      const alltagres = await axios.get(ApiRoutes.alltags);
+      setAllTags(alltagres.data.tags);
+      console.log(alltagres.data.tags); //right now this doesnt have anything
+      setSelectedTags([...selectedTags, newTagtitle.toLowerCase()]);
+      setFilteredTags([...filteredTags, alltagres.data.tags[alltagres.data.tags.length - 1]])
+      setAlltagsId([...alltagsId, alltagres.data.tags[alltagres.data.tags.length - 1]._id])
+      console.log("all tags id from create new wala elas: ", alltagsId);
+      // setFilteredTags([...filteredTags, newTagtitle.toLowerCase()]);
+
+    } catch (error) {
+      console.error('Error adding tag:', error);
+    }
+  }
+
+  // Handle adding a tag (check if it exists in the database)
+  const addTag = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // e.preventDefault;
+
+    if (e.key === 'Enter' && inputValue.trim() !== '') {
+      const existingTag = alltags.find(tag => tag.title === inputValue.trim().toLowerCase());
+      if (existingTag) {
+        console.log("already existed tag,");
+        console.log("existingtag:", existingTag)
+        // Add to selected tags if it exists
+        setSelectedTags([...selectedTags, existingTag.title]);
+        console.log("selected tag:", selectedTags)
+        setAlltagsId([...alltagsId, existingTag._id])
+        console.log("all tags id : ", alltagsId);
+      } else {
+        // Add new tag to the database
+        console.log(inputValue)
+        createNewTag(inputValue.trim());
+
+
+
+        // try {
+        //   await axios.post(ApiRoutes.createtag, { title: inputValue.trim() }); // Replace with your endpoint
+        //   setAllTags([...alltags, { _id: Date.now().toString(), title: inputValue.trim() }]);
+        //   setSelectedTags([...selectedTags, inputValue.trim()]);
+        // } catch (error) {
+        //   console.error('Error adding tag:', error);
+        // }
+      }
+
+
+      // setAllTags([...alltags, { _id: Date.now().toString(), title: inputValue.trim() }])
+      // setTagInput('')
+      setInputValue(''),
+
+        e.preventDefault()
+    }
+
+    // if (!inputValue.trim()) return;
+
+
+
+    // setInputValue('');
+  };
+
+
+
+  const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // if (e.key === 'Enter' && tagInput.trim() !== '') {
+    //   setAllTags([...alltags, { _id: Date.now().toString(), title: tagInput.trim() }])
+    //   setTagInput('')
+    //   e.preventDefault()
+    // }
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
+    console.log("handle submit called")
     e.preventDefault()
     // Handle form submission, send data to the dashboard or backend
     console.log({ title, description, date, tags, type })
@@ -176,6 +288,8 @@ const Dashboard = () => {
   const onClose = () => {
     setIsCreateModalOpen(false);
     setIsShareModalOpen(false);
+    setSelectedTags([]);
+    setAlltagsId([]);
   }
 
   const handleRemoveTag = (index: number) => {
@@ -183,7 +297,7 @@ const Dashboard = () => {
   }
 
 
-  const shareBrain = () =>{
+  const shareBrain = () => {
     console.log("share brain")
   }
 
@@ -214,11 +328,11 @@ const Dashboard = () => {
               </a>
             </div>
           </div>
-          <Modal open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
+          <Modal open={isCreateModalOpen}>
             <ModalContent>
               <ModalHeader>
-                <ModalTitle>New Thought</ModalTitle>
-                <ModalDescription>
+                <ModalTitle className=' text-center'>New Thought</ModalTitle>
+                <ModalDescription className='text-center'>
                   Save your new thought before you forget it
                 </ModalDescription>
                 <form
@@ -281,6 +395,20 @@ const Dashboard = () => {
                     </select>
                   </div>
 
+                  {/* Link */}
+                  <div className='mb-4'>
+                    <label className='block text-sm font-medium text-gray-500 mb-1'>
+                      Ref Link:
+                    </label>
+                    <input
+                      type='text'
+                      className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
+                      value={link}
+                      onChange={e => setLink(e.target.value)}
+                      required
+                    />
+                  </div>
+
                   {/* Date */}
                   <div className='mb-4'>
                     <label className='block text-sm font-medium text-gray-500 mb-1'>
@@ -291,20 +419,63 @@ const Dashboard = () => {
                     </div>
                   </div>
 
-                  {/* Tags */}
+                  {/* Tags input */}
                   <div className='mb-4'>
                     <label className='block text-sm font-medium text-gray-500 mb-1'>
                       Tags:
                     </label>
-                    <div className='flex items-center gap-2'>
+                    <div className='relative flex flex-col items-center'>
                       <input
                         type='text'
                         className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
-                        value={tagInput}
-                        onChange={e => setTagInput(e.target.value)}
-                        onKeyDown={handleAddTag}
+                        value={inputValue}
+                        onChange={handleInputChange}
+                        onKeyDown={addTag}
+                        // onKeyDown={(e) => e.key === 'Enter' && addTag(e)}
                         placeholder='Add tags and press Enter'
                       />
+                      {/* Dropdown for filtered tags */}
+                      {inputValue && (
+                        <ul className="bg-slate-950 absolute top-10 border w-full rounded-b-lg max-h-40 overflow-auto">
+                          {filteredTags.map(tag => (
+                            <li
+                              key={tag._id}
+                              onClick={() => {
+                                setSelectedTags([...selectedTags, tag.title]);
+                                setAlltagsId([...alltagsId, tag._id]);
+                                setInputValue('');
+                              }}
+                              className="px-3 py-2 text-white hover:bg-purple-600 cursor-pointer"
+                            >
+                              {tag.title}
+                            </li>
+                          ))}
+                          {filteredTags.length === 0 && <li className="text-gray-400 px-3 py-2">No matching tags</li>}
+                        </ul>
+                      )}
+                    </div>
+                    {/* Display selected tags */}
+                    <div className="flex flex-wrap mt-4 gap-2 ">
+                      {selectedTags.map((tag, index) => (
+                        <div key={index} className="flex items-center bg-purple-400/20 px-2 py-1 rounded-lg text-sm">
+                          {tag}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedTags(selectedTags.filter((_, i) => i !== index));
+                              setAlltagsId(alltagsId.filter((_, i) => i !== index));
+                            }}
+                            className="ml-2 text-red-600 hover:text-red-800"
+                          >
+                            &times;
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                    <div>
+                      {alltagsId.map((id,index) =>(
+                        <p key={index}>{id}</p>
+                      ))}
                     </div>
                     <div className='flex flex-wrap mt-2 gap-2'>
                       {tags.map((tag, index) => (
@@ -350,23 +521,23 @@ const Dashboard = () => {
           <Modal open={isShareModalOpen} onOpenChange={setIsShareModalOpen}>
             <ModalContent>
               <ModalHeader className='flex justify-center items-center gap-5'>
-                <ModalTitle>Share Your Second Brain</ModalTitle>
-                <ModalDescription className='flex gap-7'>
+                <ModalTitle className='text-center'>Share Your Second Brain</ModalTitle>
+                <div className='flex gap-7'>
                   <div className='flex flex-col gap-5'>
-                    <span>
+                    <span className='text-sm text-gray-300'>
                       Share your entire collection of notes, documents, tweets,
                       and videos with others. They&apos;ll be able to import your
                       content into their own second brain.{' '}
                     </span>
-                      <Button className='w-full bg-purple-200' onClick={shareBrain}>
+                    <Button className='w-full bg-purple-200' onClick={shareBrain}>
                       <Copy />
                       Share brain
-                      </Button>
+                    </Button>
                   </div>
                   <div>
                     <div className='w-32 h-32 bg-black'>QR code</div>
                   </div>
-                </ModalDescription>
+                </div>
               </ModalHeader>
             </ModalContent>
           </Modal>

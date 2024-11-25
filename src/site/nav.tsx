@@ -1,4 +1,3 @@
-// import { IconHome, IconMessage, IconUser } from "@tabler/icons-react";
 import { Home, User } from 'lucide-react'
 export const navItems = [
   {

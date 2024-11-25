@@ -19,7 +19,6 @@
     "@radix-ui/react-tabs": "^1.1.1",
     "@radix-ui/react-toast": "^1.2.2",
     "@react-three/fiber": "^8.17.10",
-    "@tabler/icons-react": "^3.22.0",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/typography": "^0.5.15",
     "@types/three": "^0.170.0",

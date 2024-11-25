@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2 } from 'lucide-react';
-import { IconBrandGoogleFilled } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { ApiRoutes } from '../utils/routeAPI';
 import axios from 'axios';
@@ -23,7 +22,7 @@ export default function SignUp() {
     setIsLoading(true);
     setErrors({});
 
-    console.log({username, email, password});
+    // console.log({username, email, password});
 
      // Form validation
      let newErrors: {[key: string]: string} = {};
@@ -49,7 +48,7 @@ export default function SignUp() {
       }
       const body = JSON.stringify({username, email, password});
       const res = await axios.post(ApiRoutes.signup, body, config);
-      console.log(res);
+      // console.log(res);
       if(res.status == 200){
         // todo: add otpverification route here
         navigate('/signin')
@@ -137,7 +136,6 @@ export default function SignUp() {
               </div>
             </div>
             <Button variant="outline" type="button" disabled={isLoading}>              
-              <IconBrandGoogleFilled className=" h-4 w-4" />
               Google
             </Button>
           </div>

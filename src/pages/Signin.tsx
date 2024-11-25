@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2 } from 'lucide-react';
-import { IconBrandGoogleFilled } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { ApiRoutes } from '@/utils/routeAPI';
 import axios from 'axios';
@@ -51,7 +50,7 @@ export default function SignUp() {
       const body = JSON.stringify({ username, password });
       const res = await axios.post(ApiRoutes.signin, body, config);
       // console.log(res);
-      console.log("debugginggggg")
+      // console.log("debugginggggg")
       if(res.status == 400){
         newErrors.form = 'Invalid email or password.';
         setErrors(newErrors);
@@ -59,7 +58,7 @@ export default function SignUp() {
         return;
       }
       const data = await res.data;
-      console.log(data);
+      // console.log(data);
       if (res.status == 200) {
         // Handle successful sign-in, e.g., store tokens and redirect.
         // You might want to store a token or user data in localStorage or context.
@@ -143,7 +142,6 @@ export default function SignUp() {
               </div>
             </div>
             <Button variant="outline" type="button" disabled={isLoading}>
-              <IconBrandGoogleFilled className="h-4 w-4" />
               Google
             </Button>
           </div>
