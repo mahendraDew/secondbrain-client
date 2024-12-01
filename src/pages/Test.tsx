@@ -1,229 +1,151 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { ApiRoutes } from '@/utils/routeAPI';
-import { X } from 'lucide-react';
-import { SidebarComp } from '@/components/sidebarcomp';
 
-const Test: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [tags, setTags] = useState<{ _id: string; title: string }[]>([]);
-  const [inputValue, setInputValue] = useState('');
-  const [filteredTags, setFilteredTags] = useState<{ _id: string; title: string }[]>([]);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+import { motion, useInView } from "framer-motion";
+import React from "react";
+import { Button } from "../components/ui/button";
+import Spotlight from "../components/ui/Spotlight";
+import { Github, Loader2 } from "lucide-react";
+import { Img } from 'react-image'
+import { Separator } from "@radix-ui/react-separator";
+import HackyButton from "../components/hacky-button";
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
-    }
-  }, [isOpen]);
+export default function HeroSection() {
 
-  const fetchTags = async () => {
-    try {
-      const response = await axios.get(ApiRoutes.alltags); // Replace with your endpoint
-      setTags(response.data.tags);
-      setFilteredTags(response.data.tags);
-    } catch (error) {
-      console.error('Error fetching tags:', error);
-    }
+  const ref = React.useRef(null);
+  const isInView = useInView(ref);
+
+  const FADE_DOWN_ANIMATION_VARIANTS = {
+    hidden: { opacity: 0, y: -10 },
+    show: { opacity: 1, y: 0, transition: { type: "spring" } },
   };
-
-  const openModal = () => {
-    setIsOpen(true);
-    fetchTags();
-  };
-
-  const closeModal = () => {
-    setIsOpen(false);
-    setInputValue('');
-    setFilteredTags([]);
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setInputValue(value);
-
-    const filtered = tags
-      .filter((tag) => tag.title.toLowerCase().includes(value.toLowerCase()))
-      .slice(0, 5);
-    setFilteredTags(filtered);
-  };
-
-  const addTag = async () => {
-    if (!inputValue.trim()) return;
-
-    const existingTag = tags.find((tag) => tag.title === inputValue.trim());
-
-    if (existingTag) {
-      setSelectedTags([...selectedTags, existingTag.title]);
-    } else {
-      try {
-        await axios.post('/createtag', { title: inputValue.trim() }); // Replace with your endpoint
-        setTags([...tags, { _id: Date.now().toString(), title: inputValue.trim() }]);
-        setSelectedTags([...selectedTags, inputValue.trim()]);
-      } catch (error) {
-        console.error('Error adding tag:', error);
-      }
-    }
-    setInputValue('');
-  };
-
   return (
-//     <div>
-//       <button onClick={openModal} className="px-4 py-2 bg-purple-500 text-white rounded">
-//         Open Tag Modal
-//       </button>
+    <div className="mx-auto max-w-6xl  mt-24 px-6 lg:px-8 bg-transparent relative pt-24 pb-10 ">
+      <div className="max-w-4xl absolute">
+        <Spotlight fill="#9284D4" />
+      </div>
+      <div className="mx-auto max-w-6xl  text-center mb-24 ">
+        <motion.div
+          initial="hidden"
+          ref={ref}
+          animate={isInView ? "show" : "hidden"}
+          viewport={{ once: true }}
+          variants={{
+            hidden: {},
+            show: {
+              transition: {
+                staggerChildren: 0.15,
+              },
+            },
+          }}
+        >
+          <div className="absolute -top-4 -z-10 flex w-full justify-center">
+            <div className="h-[310px] w-[310px] max-w-full animate-pulse-slow rounded-full bg-[#8678F9] opacity-20 blur-[100px]" />
+          </div>
+          <div className="absolute -top-4 -z-10 flex w-full justify-center">
+            <div className="h-[310px] w-[310px] max-w-full animate-pulse-slow rounded-full bg-[#8678F9] opacity-20 blur-[100px]" />
+          </div>
 
-//       {isOpen && (
-//         <div
-//           className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300"
-//           onClick={closeModal}  // Close modal when clicking background
-//         >
-//           <div
-//             onClick={(e) => e.stopPropagation()} // Prevents modal click from closing it
-//             className="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md transform transition-transform duration-300 scale-100"
-//           >
-//             <h2 className="text-white text-xl mb-4">Select or Add Tags</h2>
-//             <button className='absolute top-4 right-6  rounded-full text-xs' onClick={closeModal}><X  className='h-5 w-5'/></button>
-//             <input
-//               type="text"
-//               value={inputValue}
-//               onChange={handleInputChange}
-//               onKeyDown={(e) => e.key === 'Enter' && addTag()}
-//               placeholder="Type to search or add a tag"
-//               className="w-full px-3 py-2 border rounded-lg shadow-sm bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-200"
-//             />
+          
+          <motion.h1
+            variants={FADE_DOWN_ANIMATION_VARIANTS}
+            // className=" text-4xl font-bold   w-full  min-w-16"
+            className=" text-4xl font-bold  bg-gradient-to-tr  from-purple-300/80 to-white/90 bg-clip-text text-transparent tracking-normal sm:text-7xl  md:text-9xl "
+          >
+            {/* <Feeder feed="Latest Blogs" /> */}
+            {/* <div className="mb-4"></div> */}
+            <div className="alt-heading text-4xl sm:text-7xl  md:text-9xl w-full ">Your Digital Mind</div>
+          </motion.h1>
 
-//             {inputValue && (
-//               <ul className="bg-gray-700 mt-2 rounded-lg max-h-40 overflow-auto">
-//                 {filteredTags.map((tag) => (
-//                   <li
-//                     key={tag._id}
-//                     onClick={() => {
-//                       setSelectedTags([...selectedTags, tag.title]);
-//                       setInputValue('');
-//                     }}
-//                     className="px-3 py-2 text-white hover:bg-purple-600 cursor-pointer"
-//                   >
-//                     {tag.title}
-//                   </li>
-//                 ))}
-//                 {filteredTags.length === 0 && (
-//                   <li className="text-gray-400 px-3 py-2">No matching tags</li>
-//                 )}
-//               </ul>
-//             )}
+          <motion.p
+            variants={FADE_DOWN_ANIMATION_VARIANTS}
+            className="mt-6 text-lg leading-8"
+          >
+            All your ideas, your thoughts, one step away
+          </motion.p>
+          <motion.p
+            variants={FADE_DOWN_ANIMATION_VARIANTS}
+            className="mt-6 text-lg leading-8"
+          >
+            Think it. Save it. Find it.
+          </motion.p>
 
-//             <div className="flex flex-wrap mt-4 gap-2">
-//               {selectedTags.map((tag, index) => (
-//                 <div
-//                   key={index}
-//                   className="flex items-center bg-purple-400/20 px-2 py-1 rounded-lg text-sm"
-//                 >
-//                   {tag}
-//                   <button
-//                     type="button"
-//                     onClick={() => setSelectedTags(selectedTags.filter((_, i) => i !== index))}
-//                     className="ml-2 text-red-600 hover:text-red-800"
-//                   >
-//                     &times;
-//                   </button>
-//                 </div>
-//               ))}
-//             </div>
+          <motion.div
+            variants={FADE_DOWN_ANIMATION_VARIANTS}
+            className="mt-10 flex items-center justify-center gap-x-6 "
+          >
+            {/* <a href="/signup">
+              <button className="inline-flex h-10 animate-shimmer text-gray-900 items-center justify-center rounded-md border border-slate-800 bg-[linear-gradient(110deg,#ececec,45%,#adadad,55%,#ececec)] bg-[length:200%_100%] px-6 font-medium  transition-colors focus:outline-none focus:ring-1 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 shadow-[0_4px_14px_0_rgb(0,0,0,10%)] hover:shadow-[0_6px_20px_rgba(93,93,93,23%)]">
+                Get Started
+              </button>
+            </a> */}
+            {/* /signup */}
+            <a href="/signup">
+             <HackyButton text={"Get Started"}/>
+            </a>
 
-//             <div className="flex justify-end mt-4">
-//               <button
-//                 onClick={closeModal}
-//                 className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
-//               >
-//                 Close
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       )}
+          
+            <a href="https://github.com/mahendraDew"
+              target="_blank"
+              className="z-40">
 
-// <div className='flex flex-col gap-10'>
-//         <div className='bg-red-300'>
-//           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam doloribus laborum obcaecati impedit praesentium ex, quam pariatur quo maiores hic doloremque similique, mollitia veniam laudantium, molestiae labore quos quaerat voluptatibus?
-//         </div>
-//         <div className='bg-blue-300'>
-//           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam doloribus laborum obcaecati impedit praesentium ex, quam pariatur quo maiores hic doloremque similique, mollitia veniam laudantium, molestiae labore quos quaerat voluptatibus?
-//         </div>
-//         <div className='bg-red-300'>
-//           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam doloribus laborum obcaecati impedit praesentium ex, quam pariatur quo maiores hic doloremque similique, mollitia veniam laudantium, molestiae labore quos quaerat voluptatibus?
-//         </div>
-//         <div className='bg-blue-300'>
-//           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam doloribus laborum obcaecati impedit praesentium ex, quam pariatur quo maiores hic doloremque similique, mollitia veniam laudantium, molestiae labore quos quaerat voluptatibus?
-//         </div>
-//         <div className='bg-red-300'>
-//           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam doloribus laborum obcaecati impedit praesentium ex, quam pariatur quo maiores hic doloremque similique, mollitia veniam laudantium, molestiae labore quos quaerat voluptatibus?
-//         </div>
-//         <div className='bg-blue-300'>
-//           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam doloribus laborum obcaecati impedit praesentium ex, quam pariatur quo maiores hic doloremque similique, mollitia veniam laudantium, molestiae labore quos quaerat voluptatibus?
-//         </div>
-//         <div className='bg-red-300'>
-//           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam doloribus laborum obcaecati impedit praesentium ex, quam pariatur quo maiores hic doloremque similique, mollitia veniam laudantium, molestiae labore quos quaerat voluptatibus?
-//         </div>
-//         <div className='bg-red-300'>
-//           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam doloribus laborum obcaecati impedit praesentium ex, quam pariatur quo maiores hic doloremque similique, mollitia veniam laudantium, molestiae labore quos quaerat voluptatibus?
-//         </div>
-//         <div className='bg-red-300'>
-//           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam doloribus laborum obcaecati impedit praesentium ex, quam pariatur quo maiores hic doloremque similique, mollitia veniam laudantium, molestiae labore quos quaerat voluptatibus?
-//         </div>
-//         <div className='bg-blue-300'>
-//           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam doloribus laborum obcaecati impedit praesentium ex, quam pariatur quo maiores hic doloremque similique, mollitia veniam laudantium, molestiae labore quos quaerat voluptatibus?
-//         </div>
-//         <div className='bg-red-300'>
-//           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam doloribus laborum obcaecati impedit praesentium ex, quam pariatur quo maiores hic doloremque similique, mollitia veniam laudantium, molestiae labore quos quaerat voluptatibus?
-//         </div>
-//         <div className='bg-blue-300'>
-//           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam doloribus laborum obcaecati impedit praesentium ex, quam pariatur quo maiores hic doloremque similique, mollitia veniam laudantium, molestiae labore quos quaerat voluptatibus?
-//         </div>
-//         <div className='bg-red-300'>
-//           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam doloribus laborum obcaecati impedit praesentium ex, quam pariatur quo maiores hic doloremque similique, mollitia veniam laudantium, molestiae labore quos quaerat voluptatibus?
-//         </div>
-//         <div className='bg-blue-300'>
-//           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam doloribus laborum obcaecati impedit praesentium ex, quam pariatur quo maiores hic doloremque similique, mollitia veniam laudantium, molestiae labore quos quaerat voluptatibus?
-//         </div>
-//         <div className='bg-red-300'>
-//           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam doloribus laborum obcaecati impedit praesentium ex, quam pariatur quo maiores hic doloremque similique, mollitia veniam laudantium, molestiae labore quos quaerat voluptatibus?
-//         </div>
-//         <div className='bg-red-300'>
-//           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam doloribus laborum obcaecati impedit praesentium ex, quam pariatur quo maiores hic doloremque similique, mollitia veniam laudantium, molestiae labore quos quaerat voluptatibus?
-//         </div>
-//         <div className='bg-red-300'>
-//           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam doloribus laborum obcaecati impedit praesentium ex, quam pariatur quo maiores hic doloremque similique, mollitia veniam laudantium, molestiae labore quos quaerat voluptatibus?
-//         </div>
-//         <div className='bg-blue-300'>
-//           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam doloribus laborum obcaecati impedit praesentium ex, quam pariatur quo maiores hic doloremque similique, mollitia veniam laudantium, molestiae labore quos quaerat voluptatibus?
-//         </div>
-//         <div className='bg-red-300'>
-//           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam doloribus laborum obcaecati impedit praesentium ex, quam pariatur quo maiores hic doloremque similique, mollitia veniam laudantium, molestiae labore quos quaerat voluptatibus?
-//         </div>
-//         <div className='bg-blue-300'>
-//           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam doloribus laborum obcaecati impedit praesentium ex, quam pariatur quo maiores hic doloremque similique, mollitia veniam laudantium, molestiae labore quos quaerat voluptatibus?
-//         </div>
-//         <div className='bg-red-300'>
-//           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam doloribus laborum obcaecati impedit praesentium ex, quam pariatur quo maiores hic doloremque similique, mollitia veniam laudantium, molestiae labore quos quaerat voluptatibus?
-//         </div>
-//         <div className='bg-blue-300'>
-//           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam doloribus laborum obcaecati impedit praesentium ex, quam pariatur quo maiores hic doloremque similique, mollitia veniam laudantium, molestiae labore quos quaerat voluptatibus?
-//         </div>
-//         <div className='bg-red-300'>
-//           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam doloribus laborum obcaecati impedit praesentium ex, quam pariatur quo maiores hic doloremque similique, mollitia veniam laudantium, molestiae labore quos quaerat voluptatibus?
-//         </div>
-//         <div className='bg-red-300'>
-//           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam doloribus laborum obcaecati impedit praesentium ex, quam pariatur quo maiores hic doloremque similique, mollitia veniam laudantium, molestiae labore quos quaerat voluptatibus?
-//         </div>
-//       </div>
-//     </div>
-<div>
-  <SidebarComp />
-</div>
+              <Button
+                variant="link"
+                className="outline-none bg-transparent hover:bg-transparent/5 z-40"
+              >
+                
+                <p  className="flex gap-1 justify-center items-center" ><Github /> Github →</p>
+              </Button>
+            </a>
+             
+
+          </motion.div>
+
+          
+
+          {/*  */}
+          {/* <TailwindcssButtons/> */}
+          {/* <button className="relative inline-flex h-12 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50">
+            <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
+            <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-950 px-3 py-1 text-sm font-medium text-white backdrop-blur-3xl">
+              Border Magic
+            </span>
+          </button> */}
+          {/*  */}
+
+
+        </motion.div>
+      </div>
+      {/* <div className="mt-16 flow-root sm:mt-24">
+        <motion.div
+          className="rounded-md"
+          initial={{ y: 100, opacity: 0 }} // Image starts from 100px below and fully transparent
+          animate={{ y: 0, opacity: 1 }} // Image ends at its original position and fully opaque
+          transition={{ type: "spring", stiffness: 50, damping: 20 }} // transition specifications
+        >
+          <AnimatePresence mode="wait">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+            >
+             <Image src={"./landing-page.png"} />
+            </motion.div>
+          </AnimatePresence>
+        </motion.div>
+      </div> */}
+      <div className=" mt-52 px-6">
+        {/* <Image src={"/public/landing-hero.jpeg"} alt="landing hero img" /> */}
+        {/* <Image
+          src="/landing-hero.jpeg"
+          width={1200}
+          height={1200}
+          alt="Picture of the author"
+          loader={<div>Loading...</div>}
+        /> */}
+
+        <Img src="./landing-hero.jpeg" width={1200} height={1200} alt="landing hero img" loader={<div className="flex justify-center items-center"><Loader2 className="animate-spin"/></div>} className="md:min-w-xs" />
+      </div>
+      <Separator />
+    </div>
   );
-};
-
-export default Test;
+}

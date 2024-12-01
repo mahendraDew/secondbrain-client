@@ -10,7 +10,7 @@ interface RootLayoutProps {
 const MainLayout = ({ children }: RootLayoutProps) => {
   return (
     <div
-      className={`antialiased z-0 overflow-x-hidden overflow-y-auto  relative h-full w-full bg-slate-950 text-slate-900 dark:text-slate-50
+      className={` antialiased z-0 overflow-x-hidden overflow-y-auto  relative h-full w-full bg-slate-950 text-slate-900 dark:text-slate-50
           font-subheading`}
     >
       {/* <div className="absolute bottom-0 left-[-10%] right-0 top-[1%] h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle_farthest-side,rgb(255, 0, 183),rgba(255,255,255,0))] "></div>

@@ -110,7 +110,7 @@ export default function Thoughtcard({ thoughts, setThoughtData }: { thoughts: Th
                 <Separator className='mb-5' />
                 {/* <h4 className='text-lg font-semibold mb-2'>Future Projects</h4> */}
                 <p className='mb-2'>{thought.description}</p>
-                <div className='flex gap-2 mt-5'>
+                <div className='flex gap-2 mt-5 flex-wrap'>
                   {thought.tags &&
                     thought.tags.map((tag, idx) => (
                       <span

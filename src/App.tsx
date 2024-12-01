@@ -8,12 +8,13 @@ import Dashboard from "./pages/Dashboard";
 import Tos from "./pages/Tos";
 import PrivacyPolicy from "./pages/Privacy";
 import Test from "./pages/Test";
+import SharedContent from "./pages/SharedContent";
 
 
 function App() {
   
   const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') || '{}') : null; // Check if user data exists in localStorage
-  console.log("the user from app: ", user);
+  // console.log("the user from app: ", user);
 
   
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route path="/signup" element={<SignUp />} />        
           <Route path="/signin" element={<SignIn />} />        
           <Route path="/home" element={user? <Dashboard />: <Navigate to='/' />} />        
+          <Route path="/share/brain/:hash" element={<SharedContent />} />        
           <Route path="/tos" element={<Tos/>} />        
           <Route path="/privacy" element={<PrivacyPolicy />} />        
           <Route path="*" element={<Error />} /> 

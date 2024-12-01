@@ -12,5 +12,6 @@ export const ApiRoutes = {
     createtag: `${host}/api/v1/tag/createtag`,
     create: `${host}/api/v1/content/create`,
     remove: `${host}/api/v1/content/remove`,
-    changeProgress: `${host}/api/v1/todo/changeprogress`,
+    share: `${host}/api/v1/brain/share`,
+    shareHexVal: `${host}/api/v1/brain/share/user`,
 };

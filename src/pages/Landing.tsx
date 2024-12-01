@@ -15,7 +15,7 @@ export default function Landing () {
     <div className='w-full flex flex-col justify-center items-center gap-6 font-subalt '>
       <FloatingNav navItems={navItems} />
 
-      <div className='flex flex-col justify-center items-center max-w-5xl px-5 md:px-0'>
+      <div className='flex flex-col justify-center items-center max-w-6xl px-5 md:px-0'>
         <HeroSection />
         <div className=' flex justify-center items-center' id='usecase'>
           <Trendy />

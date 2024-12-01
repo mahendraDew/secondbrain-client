@@ -2,54 +2,75 @@
 
 /* Font for Heading */
 @font-face {
-    font-family: 'CalSans-SemiBold';
-    src: url('./assets/fonts/CalSans-SemiBold.ttf') format('truetype');
-    font-weight: 600;
-    font-style: normal;
-  }
-  
-  /* Font for Heading Alternate */
-  @font-face {
-    font-family: 'HeadingAlt';
-    src: url('./assets/fonts/cd-semi.otf') format('opentype');
-    font-weight: 600;
-    font-style: normal;
-  }
-  
-  /* Font for Subheading */
-  @font-face {
-    font-family: 'ProductFont';
-    src: url('./assets/fonts/product-font.ttf') format('truetype');
-    font-weight: 400;
-    font-style: normal;
-  }
-  
-  /* Font for Subheading Alternate */
-  @font-face {
-    font-family: 'SubAltFont';
-    src: url('./assets/fonts/jakarta.ttf') format('truetype');
-    font-weight: 400;
-    font-style: normal;
-  }
-  
-  /* Apply the fonts globally */
-  body {
-    font-family: 'ProductFont', sans-serif; /* Default font */
-  }
-  
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'CalSans-SemiBold', sans-serif; /* Heading font */
-  }
-  
-  .subheading {
-    font-family: 'ProductFont', sans-serif; /* Subheading font */
-  }
-  
-  .alt-heading {
-    font-family: 'HeadingAlt', sans-serif; /* Alternate heading font */
-  }
-  
-  .sub-alt {
-    font-family: 'SubAltFont', sans-serif; /* Alternate subheading font */
-  }
-  
+  font-family: 'CalSans-SemiBold';
+  src: url('./assets/fonts/CalSans-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+/* Font for Heading Alternate */
+@font-face {
+  font-family: 'HeadingAlt';
+  src: url('./assets/fonts/cd-semi.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+/* Font for Subheading */
+@font-face {
+  font-family: 'ProductFont';
+  src: url('./assets/fonts/product-font.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Font for Subheading Alternate */
+@font-face {
+  font-family: 'SubAltFont';
+  src: url('./assets/fonts/jakarta.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Font funnel display */
+@font-face {
+  font-family: 'funnel';
+  src: url('./assets/fonts/FunnelDisplay-Bold.ttf') format('truetype');
+  font-weight: 400;
+  font-style: bold;
+}
+
+/* Apply the fonts globally */
+body {
+  font-family: 'ProductFont', sans-serif;
+  /* Default font */
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'CalSans-SemiBold', sans-serif;
+  /* Heading font */
+}
+
+.subheading {
+  font-family: 'ProductFont', sans-serif;
+  /* Subheading font */
+}
+
+.alt-heading {
+  font-family: 'HeadingAlt', sans-serif;
+  /* Alternate heading font */
+}
+
+.sub-alt {
+  font-family: 'SubAltFont', sans-serif;
+  /* Alternate subheading font */
+}
+
+.funnel {
+  font-family: 'funnel', sans-serif;
+}

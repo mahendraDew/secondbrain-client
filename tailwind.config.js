@@ -72,7 +72,8 @@ module.exports = {
   			heading: ["var(--font-heading)"],
   			headingAlt: ["var(--font-headingAlt)"],
   			subheading: ["var(--font-subheading)"],
-  			subalt: ["var(--font-subalt)"]
+  			subalt: ["var(--font-subalt)"],
+			funnel: ['"Funnel Display"', 'sans-serif'],
   		},
   		borderRadius: {
   			lg: 'var(--radius)',

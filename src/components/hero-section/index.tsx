@@ -18,11 +18,11 @@ export default function HeroSection() {
     show: { opacity: 1, y: 0, transition: { type: "spring" } },
   };
   return (
-    <div className="mx-auto max-w-6xl mt-24 px-6 lg:px-8 bg-transparent relative pt-24 pb-10">
+    <div className="mx-auto max-w-6xl mt-24 px-6 lg:px-8 bg-transparent relative pt-24 pb-10 ">
       <div className="max-w-4xl absolute">
         <Spotlight fill="#9284D4" />
       </div>
-      <div className="mx-auto max-w-5xl text-center mb-24">
+      <div className="mx-auto max-w-6xl text-center mb-24">
         <motion.div
           initial="hidden"
           ref={ref}
@@ -48,10 +48,11 @@ export default function HeroSection() {
           <motion.h1
             variants={FADE_DOWN_ANIMATION_VARIANTS}
             className=" text-4xl font-bold  bg-gradient-to-tr  from-purple-300/80 to-white/90 bg-clip-text text-transparent tracking-normal sm:text-7xl  md:text-9xl "
+            // className=" text-4xl font-bold  bg-gradient-to-tr  from-purple-300/80 to-white/90 bg-clip-text text-transparent tracking-normal sm:text-7xl  md:text-9xl"
           >
             {/* <Feeder feed="Latest Blogs" /> */}
-            <div className="mb-4"></div>
-            Your Digital Mind
+            {/* <div className="mb-4"></div> */}
+            <div className="alt-heading text-4xl sm:text-7xl  md:text-9xl w-full ">Your Digital Mind</div>
           </motion.h1>
 
           <motion.p
