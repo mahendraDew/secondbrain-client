@@ -7,18 +7,13 @@ import { Icon } from '../components/ui/card-binary'
 import {
   FileText,
   Link,
-  Share2,
-  Trash2,
   Twitter,
   Youtube,
   FileImage,
   MoveUpRight,
-  Frown,
-  Loader,
   Loader2,
   SearchX
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import Footer from '@/components/Footer'
 
 type AllTagsProps = {
@@ -79,7 +74,7 @@ export default function SharedContent () {
     fetchContent() // Fetch content when component mounts
   }, [hash]) // Dependency array ensures this runs when the hash changes
 
-  const findTag = (id: string) => {
+  // const findTag = (id: string) => {
     // const inpTagId = alltags.find(tag => tag._id === id)
     // if (inpTagId) {
     // Add to selected tags if it exists
@@ -89,9 +84,9 @@ export default function SharedContent () {
     // console.log('all tags id : ', alltagsId)
     // } else {
     // Add new tag to the database
-    console.log('find tag ka else wala part')
+    // console.log('find tag ka else wala part')
     // }
-  }
+  // }
 
   if (loading) return (<div className='w-full h-screen flex flex-col justify-center items-center text-sm md:text-lg '>
  <Loader2 className='animate-spin'/>

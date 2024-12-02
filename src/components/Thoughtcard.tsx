@@ -1,8 +1,8 @@
-import { FileText, Link, Share2, Trash2, Twitter, Youtube, FileImage } from 'lucide-react'
+import { FileText, Link, Trash2, Twitter, Youtube, FileImage } from 'lucide-react'
 import { Card, CardContent, CardHeader } from './card'
 import { Button } from './ui/button'
 import { Separator } from './ui/separator'
-import { useState } from 'react'
+// import { useState } from 'react'
 import axios from 'axios'
 import { ApiRoutes } from '@/utils/routeAPI'
 
@@ -60,11 +60,11 @@ export default function Thoughtcard({ thoughts, setThoughtData }: { thoughts: Th
   const userId = userData ? userData.id : null;
 
 
-  const [removeContentId, setRemoveContentId] = useState<string>('');
+  // const [removeContentId, setRemoveContentId] = useState<string>('');
 
 
   const removeThought = async (id: string) => {
-    setRemoveContentId(id);
+    // setRemoveContentId(id);
     const deleteContent = {
       contentId: id,
       userId

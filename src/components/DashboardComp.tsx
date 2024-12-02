@@ -77,7 +77,7 @@ export function DashboardComp () {
       )}
     >
       <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody className='justify-between gap-10'>
+        <SidebarBody className='justify-between gap-10 '>
           <div className='flex flex-col flex-1 overflow-y-auto overflow-x-hidden  bg-transparent'>
             {open ? <Logo /> : <LogoIcon />}
             <div className='mt-8 flex flex-col gap-2 '>
@@ -86,7 +86,7 @@ export function DashboardComp () {
               ))}
             </div>
           </div>
-          <div>
+          <div className=''>
             <SidebarLink
               link={{
                 label: userData.username,
@@ -99,7 +99,7 @@ export function DashboardComp () {
                   //     height={50}
                   //     alt='Avatar'
                   // />
-                  <span className='bg-gray-600 p-2 rounded-full'>
+                  <span className='bg-gray-600 p-1 rounded-full'>
                     <User />
                   </span>
                 )
@@ -186,7 +186,7 @@ const Dashboard = () => {
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false)
   //   const [isConfirmModal, setIsConfirmModal] = useState(false)
 
-  const closeShareModal = () => setIsShareModalOpen(false)
+  // const closeShareModal = () => setIsShareModalOpen(false)
 
   const openCreateModal = async () => {
     setIsCreateModalOpen(true)
@@ -290,13 +290,13 @@ const Dashboard = () => {
     // setInputValue('');
   }
 
-  const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  // const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
     // if (e.key === 'Enter' && tagInput.trim() !== '') {
     //   setAllTags([...alltags, { _id: Date.now().toString(), title: tagInput.trim() }])
     //   setTagInput('')
     //   e.preventDefault()
     // }
-  }
+  // }
 
   const isValidURL = (url: string) => {
     const urlRegex = /^(https?:\/\/)?[\w.-]+\.[a-z]{2,}(\/\S*)?$/i
@@ -397,9 +397,9 @@ const Dashboard = () => {
     setValidateFormErr({})
   }
 
-  const handleRemoveTag = (index: number) => {
-    setAllTags(alltags.filter((_, i) => i !== index))
-  }
+  // const handleRemoveTag = (index: number) => {
+  //   setAllTags(alltags.filter((_, i) => i !== index))
+  // }
   const [showCopiedMsg, setShowCopiedMsg] = useState(false)
   const [linkToCopy, setLinkToCopy] = useState('')
 
