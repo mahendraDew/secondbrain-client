@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 // import { Img } from 'react-image'
 import { cn } from '@/lib/utils'
 import {
+  BadgeX,
   BrainCircuit,
   Copy,
   FileText,
@@ -399,7 +400,7 @@ const Dashboard = () => {
   const handleRemoveTag = (index: number) => {
     setAllTags(alltags.filter((_, i) => i !== index))
   }
-  const [showCopiedMsg, setShowCopiedMsg] = useState(false);
+  const [showCopiedMsg, setShowCopiedMsg] = useState(false)
   const [linkToCopy, setLinkToCopy] = useState('')
 
   useEffect(() => {
@@ -409,18 +410,17 @@ const Dashboard = () => {
     }
   }, [])
   const shareBrain = async () => {
-
     const sharelink = `${linkToCopy}/share/brain/${hashVal}`
-    console.log("sharelink:",sharelink);
+    console.log('sharelink:', sharelink)
     try {
-      await navigator.clipboard.writeText(sharelink);
+      await navigator.clipboard.writeText(sharelink)
     } catch (err) {
       console.log('Failed to copy link:', err)
       alert('Failed to copy link.')
     }
     setTimeout(() => {
-        setShowCopiedMsg(false);
-    }, 2000);
+      setShowCopiedMsg(false)
+    }, 2000)
     setShowCopiedMsg(true)
 
     // onClose()
@@ -570,22 +570,18 @@ const Dashboard = () => {
               <h1 className='text-xl md:text-3xl'>My brain</h1>
             </div>
             <div className='flex gap-5'>
-              <a href='#new'>
-                <Button
-                  onClick={openCreateModal}
-                  variant={'ghost'}
-                  className='flex justify-center items-center gap-1 text-center rounded-md bg-transparent no-underline cursor-pointer shadow-2xl leading-6  text-white  border-[1px] border-slate-500 px-4 py-2 font-mono font-medium transition-colors hover:text-indigo-300'
-                >
-                  <Plus />
-                  <span className='sm:inline hidden'>Create New</span>
-                </Button>
-              </a>
-              <a href='#share'>
-                <Button onClick={openShareModal}>
-                  <Share2 />
-                  <span className='sm:inline hidden'>Share</span>
-                </Button>
-              </a>
+              <Button
+                onClick={openCreateModal}
+                variant={'ghost'}
+                className='flex justify-center items-center gap-1 text-center rounded-md bg-transparent no-underline cursor-pointer shadow-2xl leading-6  text-white  border-[1px] border-slate-500 px-4 py-2 font-mono font-medium transition-colors hover:text-indigo-300'
+              >
+                <Plus />
+                <span className='sm:inline hidden'>Create New</span>
+              </Button>
+              <Button onClick={openShareModal}>
+                <Share2 />
+                <span className='sm:inline hidden'>Share</span>
+              </Button>
             </div>
           </div>
           {isCreateModalOpen && (
@@ -879,13 +875,14 @@ const Dashboard = () => {
                       <p
                         className={`text-sm text-purple-200 transition-opacity duration-300 ease-out ${
                           showCopiedMsg ? 'opacity-100' : 'opacity-0'
-                        }`}>
+                        }`}
+                      >
                         Copied!
                       </p>
                     </div>
                   </div>
                   <div>
-                    <div className='w-32 h-32 bg-black'>QR code</div>
+                    <div className='w-32 h-32 bg-black text-center'>QR code</div>
                   </div>
                 </div>
               </div>
@@ -944,6 +941,20 @@ const Dashboard = () => {
           {serverdown ? (
             <div className='w-full flex flex-col justify-center items-center text-sm md:text-lg '>
               <Frown /> server down <p className='text-sm'>try again later!!</p>
+            </div>
+          ) : thoughtData.length === 0 ? (
+            <div className='w-full flex flex-col justify-center items-center text-sm md:text-lg gap-1 '>
+              <BadgeX /> You dont have anything here!
+              <p className='text-sm'>
+                <Button
+                  onClick={openCreateModal}
+                  variant={'ghost'}
+                  className='flex justify-center items-center gap-1 text-center rounded-md bg-transparent no-underline cursor-pointer shadow-2xl leading-6  text-white  border-[1px] border-slate-500 px-2 py-1 font-mono font-medium transition-colors hover:text-indigo-300'
+                >
+                  <Plus />
+                  <span className='sm:inline hidden'>add</span>
+                </Button>
+              </p>
             </div>
           ) : (
             <DashboardContent
@@ -1033,7 +1044,6 @@ const DashboardContent = ({
 
   return (
     <div className='h-full w-full rounded-lg  '>
-       
       <Thoughtcard thoughts={thoughtData} setThoughtData={setThoughtData} />
     </div>
   )

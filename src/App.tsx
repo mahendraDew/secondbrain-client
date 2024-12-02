@@ -25,7 +25,7 @@ function App() {
         {/* Define navigation routes */}
         <Routes>
           <Route path="/" element={<Landing />} />        
-          <Route path="/test" element={<Test />} />        
+          <Route path="/test/:hash" element={<Test />} />        
           <Route path="/signup" element={<SignUp />} />        
           <Route path="/signin" element={<SignIn />} />        
           <Route path="/home" element={user? <Dashboard />: <Navigate to='/' />} />        

@@ -12,7 +12,11 @@ import {
   Twitter,
   Youtube,
   FileImage,
-  MoveUpRight
+  MoveUpRight,
+  Frown,
+  Loader,
+  Loader2,
+  SearchX
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Footer from '@/components/Footer'
@@ -54,6 +58,7 @@ export default function SharedContent () {
           console.log('Failed to fetch content.')
         }
       } catch (error) {
+        setLoading(false)
         console.log('Error fetching content:', error)
       }
     }
@@ -88,25 +93,33 @@ export default function SharedContent () {
     // }
   }
 
-  if (loading) return <p>Loading...</p>
-  if (!content) return <p>Content not found or invalid link.</p>
+  if (loading) return (<div className='w-full h-screen flex flex-col justify-center items-center text-sm md:text-lg '>
+ <Loader2 className='animate-spin'/>
+</div>)
+  if (!content) return (<div className='w-full h-screen flex flex-col justify-center items-center text-sm md:text-lg '>
+  <SearchX /> Content not found or invalid link
+</div>)
 
   return (
-    <div className='max-w-6xl rounded-md flex flex-col  items-center w-screen mx-auto bg-transparent '>
-      <div className='p-10 md:p-10   bg-transparent flex flex-col items-center gap-2 '>
-        <h1 className='text-xl md:text-3xl bg-gradient-to-tr  from-purple-300/80 to-white/90 bg-clip-text text-transparent'>
-          {`${content.user.username}'s brain`}
-        </h1>
-        <Separator />
-      </div>
-      {/* <Thoughtcard /> */}
-      <div className='w-full h-full flex justify-center'>
-        <SharedCard contents={content.sharedContents} alltags={alltags} />
-      </div>
-      <div className=' mt-5'>
-        <Footer />
-      </div>
+    <div className="min-h-screen flex flex-col items-center mx-auto bg-transparent max-w-6xl rounded-md w-screen">
+    {/* Header Section */}
+    <div className="p-10 md:p-10 bg-transparent flex flex-col items-center gap-2">
+      <h1 className="text-xl md:text-3xl bg-gradient-to-tr from-purple-300/80 to-white/90 bg-clip-text text-transparent">
+        {`${content.user.username}'s brain`}
+      </h1>
+      <Separator />
     </div>
+  
+    {/* Main Content Section */}
+    <div className="w-full flex-grow  flex justify-center">
+      <SharedCard contents={content.sharedContents} alltags={alltags} />
+    </div>
+  
+    {/* Footer Section */}
+    <div className="mt-auto w-full">
+      <Footer />
+    </div>
+  </div>
   )
 }
 
@@ -158,7 +171,7 @@ const SharedCard = ({
 
   return (
     <div className=''>
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 bg-slate-700/10 p-5 rounded-lg '>
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 bg-slate-700/10 p-5 rounded-lg min-h-96'>
         {contents.map((content: any, index: number) => {
           const IconComponent = iconMap[content.type] || FileText // Fallback to a default icon if not found
 

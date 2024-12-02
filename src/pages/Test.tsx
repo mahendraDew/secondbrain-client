@@ -1,151 +1,221 @@
+import { Separator } from '@/components/ui/separator'
+import { ApiRoutes } from '@/utils/routeAPI'
+import axios from 'axios'
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { Icon } from '../components/ui/card-binary'
+import {
+  FileText,
+  Link,
+  Share2,
+  Trash2,
+  Twitter,
+  Youtube,
+  FileImage,
+  MoveUpRight
+} from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import Footer from '@/components/Footer'
 
-import { motion, useInView } from "framer-motion";
-import React from "react";
-import { Button } from "../components/ui/button";
-import Spotlight from "../components/ui/Spotlight";
-import { Github, Loader2 } from "lucide-react";
-import { Img } from 'react-image'
-import { Separator } from "@radix-ui/react-separator";
-import HackyButton from "../components/hacky-button";
+type AllTagsProps = {
+  _id: string
+  title: string
+}
 
-export default function HeroSection() {
+const iconMap: { [key: string]: React.ElementType } = {
+  tweet: Twitter,
+  video: Youtube,
+  link: Link,
+  article: FileText, // Map additional icons here
+  image: FileImage
+}
 
-  const ref = React.useRef(null);
-  const isInView = useInView(ref);
+export default function SharedContent () {
+  const { hash } = useParams<{ hash: string }>() // Extract the hash from URL
+  const [content, setContent] = useState<{
+    user: {_id: string, username: string},
+    sharedContents: any
+  } | null>(null) // State to store fetched content
+  const [loading, setLoading] = useState<boolean>(true)
+  const [alltags, setAllTags] = useState<AllTagsProps[]>([])
 
-  const FADE_DOWN_ANIMATION_VARIANTS = {
-    hidden: { opacity: 0, y: -10 },
-    show: { opacity: 1, y: 0, transition: { type: "spring" } },
-  };
+  useEffect(() => {
+    // console.log(ApiRoutes.share + '/' + hash)
+    const fetchContent = async () => {
+      try {
+        const response = await axios.get(ApiRoutes.share + '/' + hash) // Adjust API endpoint as needed
+        // console.log(response.data.sharedContents)
+        // console.log(response.data.userId)
+        if (response.status === 200 || response.statusText === 'OK') {
+          //   console.log('yeyy we got it!!!!')
+          setLoading(false)
+          setContent(response.data) // Assuming the server returns { content: "..." }
+        } else {
+          console.log('Failed to fetch content.')
+        }
+      } catch (error) {
+        console.log('Error fetching content:', error)
+      }
+    }
+
+    const fetchTags = async () => {
+      try {
+        const response = await axios.get(ApiRoutes.alltags)
+        console.log('fetch res:', response.data.tags)
+        setAllTags(response.data.tags)
+        console.log('typeof:', typeof alltags)
+      } catch (error) {
+        console.log('Error fetching tags:', error)
+      }
+    }
+
+    fetchTags()
+    // console.log(content?.sharedContents)
+    fetchContent() // Fetch content when component mounts
+  }, [hash]) // Dependency array ensures this runs when the hash changes
+
+  const findTag = (id: string) => {
+    // const inpTagId = alltags.find(tag => tag._id === id)
+    // if (inpTagId) {
+    // Add to selected tags if it exists
+    //   setSelectedTags([...selectedTags, inpTagId.title])
+    // console.log('selected tag:', selectedTags)
+    // setAlltagsId([...alltagsId, existingTag._id])
+    // console.log('all tags id : ', alltagsId)
+    // } else {
+    // Add new tag to the database
+    console.log('find tag ka else wala part')
+    // }
+  }
+
+  if (loading) return <p>Loading...</p>
+  if (!content) return <p>Content not found or invalid link.</p>
+
   return (
-    <div className="mx-auto max-w-6xl  mt-24 px-6 lg:px-8 bg-transparent relative pt-24 pb-10 ">
-      <div className="max-w-4xl absolute">
-        <Spotlight fill="#9284D4" />
-      </div>
-      <div className="mx-auto max-w-6xl  text-center mb-24 ">
-        <motion.div
-          initial="hidden"
-          ref={ref}
-          animate={isInView ? "show" : "hidden"}
-          viewport={{ once: true }}
-          variants={{
-            hidden: {},
-            show: {
-              transition: {
-                staggerChildren: 0.15,
-              },
-            },
-          }}
-        >
-          <div className="absolute -top-4 -z-10 flex w-full justify-center">
-            <div className="h-[310px] w-[310px] max-w-full animate-pulse-slow rounded-full bg-[#8678F9] opacity-20 blur-[100px]" />
-          </div>
-          <div className="absolute -top-4 -z-10 flex w-full justify-center">
-            <div className="h-[310px] w-[310px] max-w-full animate-pulse-slow rounded-full bg-[#8678F9] opacity-20 blur-[100px]" />
-          </div>
-
-          
-          <motion.h1
-            variants={FADE_DOWN_ANIMATION_VARIANTS}
-            // className=" text-4xl font-bold   w-full  min-w-16"
-            className=" text-4xl font-bold  bg-gradient-to-tr  from-purple-300/80 to-white/90 bg-clip-text text-transparent tracking-normal sm:text-7xl  md:text-9xl "
-          >
-            {/* <Feeder feed="Latest Blogs" /> */}
-            {/* <div className="mb-4"></div> */}
-            <div className="alt-heading text-4xl sm:text-7xl  md:text-9xl w-full ">Your Digital Mind</div>
-          </motion.h1>
-
-          <motion.p
-            variants={FADE_DOWN_ANIMATION_VARIANTS}
-            className="mt-6 text-lg leading-8"
-          >
-            All your ideas, your thoughts, one step away
-          </motion.p>
-          <motion.p
-            variants={FADE_DOWN_ANIMATION_VARIANTS}
-            className="mt-6 text-lg leading-8"
-          >
-            Think it. Save it. Find it.
-          </motion.p>
-
-          <motion.div
-            variants={FADE_DOWN_ANIMATION_VARIANTS}
-            className="mt-10 flex items-center justify-center gap-x-6 "
-          >
-            {/* <a href="/signup">
-              <button className="inline-flex h-10 animate-shimmer text-gray-900 items-center justify-center rounded-md border border-slate-800 bg-[linear-gradient(110deg,#ececec,45%,#adadad,55%,#ececec)] bg-[length:200%_100%] px-6 font-medium  transition-colors focus:outline-none focus:ring-1 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 shadow-[0_4px_14px_0_rgb(0,0,0,10%)] hover:shadow-[0_6px_20px_rgba(93,93,93,23%)]">
-                Get Started
-              </button>
-            </a> */}
-            {/* /signup */}
-            <a href="/signup">
-             <HackyButton text={"Get Started"}/>
-            </a>
-
-          
-            <a href="https://github.com/mahendraDew"
-              target="_blank"
-              className="z-40">
-
-              <Button
-                variant="link"
-                className="outline-none bg-transparent hover:bg-transparent/5 z-40"
-              >
-                
-                <p  className="flex gap-1 justify-center items-center" ><Github /> Github →</p>
-              </Button>
-            </a>
-             
-
-          </motion.div>
-
-          
-
-          {/*  */}
-          {/* <TailwindcssButtons/> */}
-          {/* <button className="relative inline-flex h-12 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50">
-            <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
-            <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-950 px-3 py-1 text-sm font-medium text-white backdrop-blur-3xl">
-              Border Magic
-            </span>
-          </button> */}
-          {/*  */}
-
-
-        </motion.div>
-      </div>
-      {/* <div className="mt-16 flow-root sm:mt-24">
-        <motion.div
-          className="rounded-md"
-          initial={{ y: 100, opacity: 0 }} // Image starts from 100px below and fully transparent
-          animate={{ y: 0, opacity: 1 }} // Image ends at its original position and fully opaque
-          transition={{ type: "spring", stiffness: 50, damping: 20 }} // transition specifications
-        >
-          <AnimatePresence mode="wait">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
-            >
-             <Image src={"./landing-page.png"} />
-            </motion.div>
-          </AnimatePresence>
-        </motion.div>
-      </div> */}
-      <div className=" mt-52 px-6">
-        {/* <Image src={"/public/landing-hero.jpeg"} alt="landing hero img" /> */}
-        {/* <Image
-          src="/landing-hero.jpeg"
-          width={1200}
-          height={1200}
-          alt="Picture of the author"
-          loader={<div>Loading...</div>}
-        /> */}
-
-        <Img src="./landing-hero.jpeg" width={1200} height={1200} alt="landing hero img" loader={<div className="flex justify-center items-center"><Loader2 className="animate-spin"/></div>} className="md:min-w-xs" />
-      </div>
+    <div className="min-h-screen flex flex-col items-center mx-auto bg-transparent max-w-6xl rounded-md w-screen">
+    {/* Header Section */}
+    <div className="p-10 md:p-10 bg-transparent flex flex-col items-center gap-2">
+      <h1 className="text-xl md:text-3xl bg-gradient-to-tr from-purple-300/80 to-white/90 bg-clip-text text-transparent">
+        {`${content.user.username}'s brain`}
+      </h1>
       <Separator />
     </div>
-  );
+  
+    {/* Main Content Section */}
+    <div className="w-full flex-grow  flex justify-center">
+      <SharedCard contents={content.sharedContents} alltags={alltags} />
+    </div>
+  
+    {/* Footer Section */}
+    <div className="mt-auto w-full">
+      <Footer />
+    </div>
+  </div>
+  
+  )
+}
+
+// const SharedCard = (contents:any, alltags:AllTagsProps[]) => {
+const SharedCard = ({
+  contents,
+  alltags
+}: {
+  contents: any
+  alltags: AllTagsProps[]
+}) => {
+  // contents = contents.contents
+  console.log('contents:', contents)
+  // console.log("alltags from sharedcard:", alltags);
+
+  // const getTagTitles = (tagIds: string[]): string[] => {
+  // const getTagTitles = (tagIds: string[]): any => {
+  //   console.log("tagIds: ", tagIds)
+  //   tagIds.map(id => console.log(id))
+  //   console.log("alltags: ", alltags)
+  //   const temp = tagIds.map(id => alltags.filter(tag => tag._id === id))
+  //   console.log("temp: ", temp)
+  // };
+
+  const getTagTitles = (tagIds: string[]): string[] => {
+    console.log('tagIds:', tagIds)
+    console.log('alltags:', alltags)
+
+    if (!Array.isArray(alltags)) {
+      console.error('alltags is not an array or is undefined')
+      return []
+    }
+
+    return tagIds.map(id => {
+      const tag = alltags.find(tag => tag._id === id)
+      return tag ? tag.title : 'Unknown Tag'
+    })
+  }
+
+  const formatDate = (isoDate: string): string => {
+    const date = new Date(isoDate)
+
+    const day = String(date.getUTCDate()).padStart(2, '0')
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0')
+    const year = date.getUTCFullYear()
+
+    return `${day}/${month}/${year}`
+  }
+
+  return (
+    <div className=''>
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 bg-slate-700/10 p-5 rounded-lg min-h-96'>
+        {contents.map((content: any, index: number) => {
+          const IconComponent = iconMap[content.type] || FileText // Fallback to a default icon if not found
+
+          return (
+            <div
+              key={index}
+              className='border border-black/[0.2] bg-gradient-to-tr from-purple-400/10 to-transparent/5 dark:border-white/[0.2] flex flex-col items-start  relative min-h-96 w-80 px-5 '
+            >
+              <Icon className='absolute h-6 w-6 -top-3 -left-3 dark:text-white text-black' />
+              <Icon className='absolute h-6 w-6 -bottom-3 -left-3 dark:text-white text-black' />
+              <Icon className='absolute h-6 w-6 -top-3 -right-3 dark:text-white text-black' />
+              <Icon className='absolute h-6 w-6 -bottom-3 -right-3 dark:text-white text-black' />
+
+              <div className='p-2  w-full'>
+                <div className='flex flex-row items-center justify-between space-y-0 pb-2 '>
+                  <div className='flex gap-2 items-center'>
+                    {/* <div className='text-sm'>{content.type}</div> */}
+                    <IconComponent className='h-4 w-4' />
+                    <div className='font-medium'>{content.title}</div>
+                  </div>
+                  <a
+                    href={content.link}
+                    className='h-8 w-8 flex justify-center items-center'
+                  >
+                    <MoveUpRight className='h-4 w-4 hover:text-purple-600' />
+                  </a>
+                </div>
+                <Separator />
+                <div className='bg-purple-300/10 rounded-sm min-h-64 p-3 mt-2 overflow-hidden'>
+                  <div className='line-clamp-[10] overflow-hidden text-ellipsis'>
+                    {content.description}
+                  </div>
+                </div>
+                {/* <div className='text-gray-400'>{content.tags.map((tagId:string, index:number) => <div key={index}>{tagId}</div>)}</div> */}
+                {/* <div className='text-gray-400'>{content.tags.map((tagId:string, index:number) => <div key={index}>{tagId}</div>)}</div> */}
+                <div className=' py-2  bottom-0'>
+                  <div className='text-purple-200 flex gap-1 flex-wrap'>
+                    {getTagTitles(content.tags).map(tag => (
+                      <div className=' bg-purple-700/40 px-1 text-sm rounded-lg'>
+                        {tag}
+                      </div>
+                    ))}
+                  </div>
+                  <div className='text-gray-400  flex justify-end text-sm'>
+                    {formatDate(content.date)}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
 }

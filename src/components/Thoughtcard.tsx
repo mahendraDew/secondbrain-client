@@ -98,9 +98,11 @@ export default function Thoughtcard({ thoughts, setThoughtData }: { thoughts: Th
                   <h3 className='font-medium'>{thought.title}</h3>
                 </div>
                 <div className='flex gap-2'>
-                  <Button variant='ghost' size='icon' className='h-8 w-8'>
-                    <Share2 className='h-4 w-4' />
-                  </Button>
+                  <a href={thought.link} target='_blank'>
+                    <Button variant='ghost' size='icon' className='h-8 w-8'>
+                      <Link className='h-4 w-4' />
+                    </Button>
+                  </a>
                   <Button variant='ghost' size='icon' className='h-8 w-8' onClick={() => removeThought(thought._id)}>
                     <Trash2 className='h-4 w-4 text-red-600' />
                   </Button>
