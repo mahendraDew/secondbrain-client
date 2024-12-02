@@ -3,8 +3,7 @@ import { motion, useInView } from "framer-motion";
 import React from "react";
 import { Button } from "../ui/button";
 import Spotlight from "../ui/Spotlight";
-import { Github, Loader2 } from "lucide-react";
-import { Img } from 'react-image'
+import { Github } from "lucide-react";
 import { Separator } from "@radix-ui/react-separator";
 import HackyButton from "../hacky-button";
 import Macbook from "../macbook";

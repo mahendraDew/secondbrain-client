@@ -7,7 +7,7 @@ import Error from './pages/Error';
 import Dashboard from "./pages/Dashboard";
 import Tos from "./pages/Tos";
 import PrivacyPolicy from "./pages/Privacy";
-import Test from "./pages/Test";
+// import Test from "./pages/Test";
 import SharedContent from "./pages/SharedContent";
 
 
@@ -25,7 +25,7 @@ function App() {
         {/* Define navigation routes */}
         <Routes>
           <Route path="/" element={<Landing />} />        
-          <Route path="/test" element={<Test />} />        
+          {/* <Route path="/test" element={<Test />} />         */}
           <Route path="/signup" element={<SignUp />} />        
           <Route path="/signin" element={<SignIn />} />        
           <Route path="/home" element={user? <Dashboard />: <Navigate to='/' />} />        
