@@ -1023,24 +1023,7 @@ const DashboardContent = ({
   //     date: "2024-11-25T05:52:27.673Z",
   //     userId: "67438023db4fea854fadb319"
   // }]);
-  const thoughts = [
-    {
-      id: 1,
-      title: 'Thought one',
-      description: 'This is the description of thought 1.',
-      date: '2023-10-01',
-      tags: ['productivity', 'ideas'],
-      icon: 'twitter'
-    },
-    {
-      id: 2,
-      title: 'Thought 2',
-      description: 'This is the description of thought 2.',
-      date: '2023-10-02',
-      tags: ['Movie', 'Film'],
-      icon: 'video'
-    }
-  ]
+  
 
   return (
     <div className='h-full w-full rounded-lg  '>

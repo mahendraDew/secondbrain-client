@@ -7,6 +7,7 @@ import { Github, Loader2 } from "lucide-react";
 import { Img } from 'react-image'
 import { Separator } from "@radix-ui/react-separator";
 import HackyButton from "../hacky-button";
+import Macbook from "../macbook";
 
 export default function HeroSection() {
 
@@ -143,7 +144,8 @@ export default function HeroSection() {
           loader={<div>Loading...</div>}
         /> */}
 
-        <Img src="./landing-hero.jpeg" width={1200} height={1200} alt="landing hero img" loader={<div className="flex justify-center items-center"><Loader2 className="animate-spin"/></div>} className="md:min-w-xs" />
+        {/* <Img src="./landing-hero.jpeg" width={1200} height={1200} alt="landing hero img" loader={<div className="flex justify-center items-center"><Loader2 className="animate-spin"/></div>} className="md:min-w-xs" /> */}
+        <Macbook />
       </div>
       <Separator />
     </div>
