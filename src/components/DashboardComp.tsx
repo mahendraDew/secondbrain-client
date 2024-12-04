@@ -11,7 +11,6 @@ import {
   FileText,
   Filter,
   Frown,
-  Hash,
   Link,
   Loader2,
   LogOut,
