@@ -1,10 +1,11 @@
-import { FileText, Link, Trash2, Twitter, Youtube, FileImage } from 'lucide-react'
+import { FileText, Link, Trash2, Twitter, Youtube, FileImage, Loader2, ArrowUpRight } from 'lucide-react'
 import { Card, CardContent, CardHeader } from './card'
 import { Button } from './ui/button'
 import { Separator } from './ui/separator'
 // import { useState } from 'react'
 import axios from 'axios'
 import { ApiRoutes } from '@/utils/routeAPI'
+import { useState } from 'react'
 
 type Type = {
   _id: string,
@@ -58,12 +59,15 @@ export default function Thoughtcard({ thoughts, setThoughtData }: { thoughts: Th
 
   const userData = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') || '{}') : null; // Check if user data exists in localStorage
   const userId = userData ? userData.id : null;
-
+  const [loading, setLoading] = useState(false);
+  const [deleteCardInx, setDeleteCardInx] = useState<number>();
 
   // const [removeContentId, setRemoveContentId] = useState<string>('');
 
 
-  const removeThought = async (id: string) => {
+  const removeThought = async (id: string, index:number) => {
+    setLoading(true);
+    setDeleteCardInx(index);
     // setRemoveContentId(id);
     const deleteContent = {
       contentId: id,
@@ -80,7 +84,10 @@ export default function Thoughtcard({ thoughts, setThoughtData }: { thoughts: Th
     } catch (error) {
       console.log('Error:', error);
     }
+
+    setLoading(false);
   }
+
   return (
     <div className='h-full '>
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5  '>
@@ -88,6 +95,11 @@ export default function Thoughtcard({ thoughts, setThoughtData }: { thoughts: Th
         {thoughts.slice().reverse().map((thought, index) => {
           const IconComponent = iconMap[thought.type] || FileText // Fallback to a default icon if not found
           const date = new Date(thought.date);
+          if(loading){
+            if(deleteCardInx === index){
+              return <div className='w-full h-full rounded-lg flex justify-center items-center animate-pulse bg-slate-300/10'></div>
+            }
+          } 
           return (
             <Card className='shadow-sm' key={index}>
               <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
@@ -100,10 +112,10 @@ export default function Thoughtcard({ thoughts, setThoughtData }: { thoughts: Th
                 <div className='flex gap-2'>
                   <a href={thought.link} target='_blank'>
                     <Button variant='ghost' size='icon' className='h-8 w-8'>
-                      <Link className='h-4 w-4' />
+                      <ArrowUpRight className='h-4 w-4' />
                     </Button>
                   </a>
-                  <Button variant='ghost' size='icon' className='h-8 w-8' onClick={() => removeThought(thought._id)}>
+                  <Button variant='ghost' size='icon' className='h-8 w-8' onClick={() => removeThought(thought._id, index)}>
                     <Trash2 className='h-4 w-4 text-red-600' />
                   </Button>
                 </div>

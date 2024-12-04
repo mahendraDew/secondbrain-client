@@ -11,6 +11,7 @@ import {
   Frown,
   Hash,
   Link,
+  Loader2,
   Plus,
   Share2,
   Twitter,
@@ -122,7 +123,6 @@ export const Logo = () => {
       <div>
         <BrainCircuit className='text-gray-800 dark:text-purple-100 h-full w-full' />
       </div>
-      {/* <div className="h-5 w-6 bg-black dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" /> */}
       <motion.span
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -143,7 +143,6 @@ export const LogoIcon = () => {
       <div>
         <BrainCircuit className='text-gray-800 dark:text-purple-100 h-full w-full' />
       </div>
-      {/* <div className='h-5 w-6 bg-black dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0' /> */}
     </a>
   )
 }
@@ -152,7 +151,7 @@ export const LogoIcon = () => {
 const Dashboard = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
-  // const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   //form data (title(string), desc(string), date(date), tags({id,string}), link )
   const [title, setTitle] = useState('')
@@ -164,6 +163,8 @@ const Dashboard = () => {
   const [validateFormErr, setValidateFormErr] = useState<{
     [key: string]: string
   }>({})
+
+  const [createCardLoading, setCreateCardLoading] = useState(false)
 
   // const [tags, setTags] = useState<string[]>([])
   const [thoughtData, setThoughtData] = useState<ThoughtProp[]>([])
@@ -270,33 +271,11 @@ const Dashboard = () => {
         // Add new tag to the database
         console.log(inputValue)
         createNewTag(inputValue.trim())
-
-        // try {
-        //   await axios.post(ApiRoutes.createtag, { title: inputValue.trim() }); // Replace with your endpoint
-        //   setAllTags([...alltags, { _id: Date.now().toString(), title: inputValue.trim() }]);
-        //   setSelectedTags([...selectedTags, inputValue.trim()]);
-        // } catch (error) {
-        //   console.error('Error adding tag:', error);
-        // }
       }
 
-      // setAllTags([...alltags, { _id: Date.now().toString(), title: inputValue.trim() }])
-      // setTagInput('')
       setInputValue(''), e.preventDefault()
     }
-
-    // if (!inputValue.trim()) return;
-
-    // setInputValue('');
   }
-
-  // const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // if (e.key === 'Enter' && tagInput.trim() !== '') {
-    //   setAllTags([...alltags, { _id: Date.now().toString(), title: tagInput.trim() }])
-    //   setTagInput('')
-    //   e.preventDefault()
-    // }
-  // }
 
   const isValidURL = (url: string) => {
     const urlRegex = /^(https?:\/\/)?[\w.-]+\.[a-z]{2,}(\/\S*)?$/i
@@ -305,6 +284,7 @@ const Dashboard = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setCreateCardLoading(true)
 
     // Validate form fields
     let newErrors: { [key: string]: string } = {}
@@ -379,6 +359,7 @@ const Dashboard = () => {
     setAlltagsId([]), setType('')
     setLink('')
     setValidateFormErr({})
+    setCreateCardLoading(false)
     onClose() // Close the modal after submission
   }
 
@@ -397,9 +378,6 @@ const Dashboard = () => {
     setValidateFormErr({})
   }
 
-  // const handleRemoveTag = (index: number) => {
-  //   setAllTags(alltags.filter((_, i) => i !== index))
-  // }
   const [showCopiedMsg, setShowCopiedMsg] = useState(false)
   const [linkToCopy, setLinkToCopy] = useState('')
 
@@ -427,6 +405,7 @@ const Dashboard = () => {
   }
 
   useEffect(() => {
+    setIsLoading(true)
     console.log('useeffect called out')
     const fetchUserContents = async () => {
       const userData = localStorage.getItem('user')
@@ -454,6 +433,7 @@ const Dashboard = () => {
         setServerdown(true)
         console.log('server error!')
       }
+      setIsLoading(false)
     }
 
     const fetchUserShareable = async () => {
@@ -561,6 +541,13 @@ const Dashboard = () => {
     shareRequest(true)
   }
 
+  // if (isLoading)
+  //   return (
+  //     <div className='w-full h-screen flex flex-col justify-center items-center text-sm md:text-lg '>
+  //       <Loader2 className='animate-spin' />
+  //     </div>
+  //   )
+
   return (
     <div className='flex flex-1'>
       <div className='p-10 md:p-10 rounded-tl-2xl  bg-transparent flex flex-col gap-2 flex-1 w-full h-full'>
@@ -593,225 +580,219 @@ const Dashboard = () => {
                 onClick={e => e.stopPropagation()} // Prevents modal click from closing it
                 className='border border-black/[0.2] dark:border-white/[0.2]   bg-slate-950 p-6 rounded-lg shadow-lg w-full max-w-md transform transition-transform duration-300 scale-100'
               >
-                <h2 className='text-white text-xl mb-4 text-center'>
-                  New Thought
-                </h2>
-                <p className='text-center text-gray-400'>
-                  Save your new thought before you forget it
-                </p>
-                <button
-                  className='absolute top-4 right-6  rounded-full text-xs'
-                  onClick={onClose}
-                >
-                  <X className='h-5 w-5' />
-                </button>
-
-                <form
-                  onSubmit={handleSubmit}
-                  className='text-white px-4 sm:px-6 md:px-8 lg:px-10 py-4'
-                >
-                  {/* Title */}
-                  <div className='mb-4'>
-                    <label className='block text-sm font-medium text-gray-500 mb-1'>
-                      Title:
-                    </label>
-                    <input
-                      type='text'
-                      className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
-                      value={title}
-                      onChange={e => setTitle(e.target.value)}
-                      required
-                    />
-                    {validateFormErr.title && (
-                      <p className='text-sm text-red-500'>
-                        {validateFormErr.title}
-                      </p>
-                    )}
+                {createCardLoading ? (
+                  <div className='bg-transparent rounded-lg flex flex-col justify-center items-center'>
+                    creating...
+                    <Loader2 className='animate-spin' />
                   </div>
-
-                  {/* Description */}
-                  <div className='mb-4'>
-                    <label className='block text-sm font-medium text-gray-500 mb-1'>
-                      Description:
-                    </label>
-                    <textarea
-                      className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
-                      rows={3}
-                      value={description}
-                      onChange={e => setDescription(e.target.value)}
-                      required
-                    ></textarea>
-                    {validateFormErr.description && (
-                      <p className='text-sm text-red-500'>
-                        {validateFormErr.description}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Type Selection */}
-                  <div className='mb-4'>
-                    <label className='block text-sm font-medium text-gray-500 mb-1'>
-                      Type:
-                    </label>
-                    <select
-                      className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
-                      value={type}
-                      onChange={e => {
-                        console.log('select called')
-                        setType(e.target.value.toLowerCase())
-                        console.log('type:', type.toLowerCase())
-                      }}
+                ) : (
+                  <div>
+                    <h2 className='text-white text-xl mb-4 text-center'>
+                      New Thought
+                    </h2>
+                    <p className='text-center text-gray-400'>
+                      Save your new thought before you forget it
+                    </p>
+                    <button
+                      className='absolute top-4 right-6  rounded-full text-xs'
+                      onClick={onClose}
                     >
-                      <option value='tweet' className='bg-slate-950'>
-                        Tweet
-                      </option>
-                      <option value='video' className='bg-slate-950'>
-                        Video
-                      </option>
-                      <option value='link' className='bg-slate-950'>
-                        Link
-                      </option>
-                      <option value='image' className='bg-slate-950'>
-                        Image
-                      </option>
-                      <option value='article' className='bg-slate-950'>
-                        Article
-                      </option>
-                    </select>
-                  </div>
+                      <X className='h-5 w-5' />
+                    </button>
 
-                  {/* Link */}
-                  <div className='mb-4'>
-                    <label className='block text-sm font-medium text-gray-500 mb-1'>
-                      Ref Link:
-                    </label>
-                    <input
-                      type='text'
-                      className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
-                      value={link}
-                      onChange={e => setLink(e.target.value)}
-                      required
-                    />
-                    {validateFormErr.link && (
-                      <p className='text-sm text-red-500'>
-                        {validateFormErr.link}
-                      </p>
-                    )}
-                  </div>
+                    <form
+                      onSubmit={handleSubmit}
+                      className='text-white px-4 sm:px-6 md:px-8 lg:px-10 py-4'
+                    >
+                      {/* Title */}
+                      <div className='mb-4'>
+                        <label className='block text-sm font-medium text-gray-500 mb-1'>
+                          Title:
+                        </label>
+                        <input
+                          type='text'
+                          className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
+                          value={title}
+                          onChange={e => setTitle(e.target.value)}
+                          required
+                        />
+                        {validateFormErr.title && (
+                          <p className='text-sm text-red-500'>
+                            {validateFormErr.title}
+                          </p>
+                        )}
+                      </div>
 
-                  {/* Date */}
-                  <div className='mb-4'>
-                    <label className='block text-sm font-medium text-gray-500 mb-1'>
-                      Date:
-                    </label>
-                    <div className='mt-1 w-full px-3 py-2 border rounded-lg shadow-sm bg-transparent dark:text-white'>
-                      {date}
-                    </div>
-                  </div>
+                      {/* Description */}
+                      <div className='mb-4'>
+                        <label className='block text-sm font-medium text-gray-500 mb-1'>
+                          Description:
+                        </label>
+                        <textarea
+                          className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
+                          rows={3}
+                          value={description}
+                          onChange={e => setDescription(e.target.value)}
+                          required
+                        ></textarea>
+                        {validateFormErr.description && (
+                          <p className='text-sm text-red-500'>
+                            {validateFormErr.description}
+                          </p>
+                        )}
+                      </div>
 
-                  {/* Tags input */}
-                  <div className='mb-4'>
-                    <label className='block text-sm font-medium text-gray-500 mb-1'>
-                      Tags:
-                    </label>
-                    <div className='relative flex flex-col'>
-                      <input
-                        type='text'
-                        className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
-                        value={inputValue}
-                        onChange={handleInputChange}
-                        onKeyDown={addTag}
-                        // onKeyDown={(e) => e.key === 'Enter' && addTag(e)}
-                        placeholder='Add tags and press Enter'
-                      />
-                      {validateFormErr.tag && alltagsId.length <= 0 && (
-                        <p className='text-sm text-red-500 text-left'>
-                          {validateFormErr.tag}
-                        </p>
-                      )}
-
-                      {/* Dropdown for filtered tags */}
-                      {inputValue && (
-                        <ul className='bg-slate-950 absolute top-10 border w-full rounded-b-lg max-h-40 overflow-auto'>
-                          {filteredTags.map(tag => (
-                            <li
-                              key={tag._id}
-                              onClick={() => {
-                                setSelectedTags([...selectedTags, tag.title])
-                                setAlltagsId([...alltagsId, tag._id])
-                                setInputValue('')
-                              }}
-                              className='px-3 py-2 text-white hover:bg-purple-600 cursor-pointer'
-                            >
-                              {tag.title}
-                            </li>
-                          ))}
-                          {filteredTags.length === 0 && (
-                            <li className='text-gray-400 px-3 py-2'>
-                              No matching tags
-                            </li>
-                          )}
-                        </ul>
-                      )}
-                    </div>
-                    {/* Display selected tags */}
-                    <div className='flex flex-wrap mt-4 gap-2 '>
-                      {selectedTags.map((tag, index) => (
-                        <div
-                          key={index}
-                          className='flex items-center bg-purple-400/20 px-2 py-1 rounded-lg text-sm'
+                      {/* Type Selection */}
+                      <div className='mb-4'>
+                        <label className='block text-sm font-medium text-gray-500 mb-1'>
+                          Type:
+                        </label>
+                        <select
+                          className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
+                          value={type}
+                          onChange={e => {
+                            console.log('select called')
+                            setType(e.target.value.toLowerCase())
+                            console.log('type:', type.toLowerCase())
+                          }}
                         >
-                          {tag}
-                          <button
-                            type='button'
-                            onClick={() => {
-                              setSelectedTags(
-                                selectedTags.filter((_, i) => i !== index)
-                              )
-                              setAlltagsId(
-                                alltagsId.filter((_, i) => i !== index)
-                              )
-                            }}
-                            className='ml-2 text-red-600 hover:text-red-800'
-                          >
-                            &times;
-                          </button>
+                          <option value='tweet' className='bg-slate-950'>
+                            Tweet
+                          </option>
+                          <option value='video' className='bg-slate-950'>
+                            Video
+                          </option>
+                          <option value='link' className='bg-slate-950'>
+                            Link
+                          </option>
+                          <option value='image' className='bg-slate-950'>
+                            Image
+                          </option>
+                          <option value='article' className='bg-slate-950'>
+                            Article
+                          </option>
+                        </select>
+                      </div>
+
+                      {/* Link */}
+                      <div className='mb-4'>
+                        <label className='block text-sm font-medium text-gray-500 mb-1'>
+                          Ref Link:
+                        </label>
+                        <input
+                          type='text'
+                          className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
+                          value={link}
+                          onChange={e => setLink(e.target.value)}
+                          required
+                        />
+                        {validateFormErr.link && (
+                          <p className='text-sm text-red-500'>
+                            {validateFormErr.link}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Date */}
+                      <div className='mb-4'>
+                        <label className='block text-sm font-medium text-gray-500 mb-1'>
+                          Date:
+                        </label>
+                        <div className='mt-1 w-full px-3 py-2 border rounded-lg shadow-sm bg-transparent dark:text-white'>
+                          {date}
                         </div>
-                      ))}
-                    </div>
+                      </div>
 
-                    {/* <div className='flex flex-wrap mt-2 gap-2'>
-                                            {tags.map((tag, index) => (
-                                                <div
-                                                    key={index}
-                                                    className='flex items-center bg-purple-400/10 px-2 py-1 rounded-lg text-sm'
-                                                >
-                                                    {tag}
-                                                    <button
-                                                        type='button'
-                                                        onClick={() => handleRemoveTag(index)}
-                                                        className='ml-2 text-red-600 hover:text-red-800'
-                                                    >
-                                                        &times;
-                                                    </button>
-                                                </div>
-                                            ))}
-                                        </div> */}
+                      {/* Tags input */}
+                      <div className='mb-4'>
+                        <label className='block text-sm font-medium text-gray-500 mb-1'>
+                          Tags:
+                        </label>
+                        <div className='relative flex flex-col'>
+                          <input
+                            type='text'
+                            className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
+                            value={inputValue}
+                            onChange={handleInputChange}
+                            onKeyDown={addTag}
+                            // onKeyDown={(e) => e.key === 'Enter' && addTag(e)}
+                            placeholder='Add tags and press Enter'
+                          />
+                          {validateFormErr.tag && alltagsId.length <= 0 && (
+                            <p className='text-sm text-red-500 text-left'>
+                              {validateFormErr.tag}
+                            </p>
+                          )}
+
+                          {/* Dropdown for filtered tags */}
+                          {inputValue && (
+                            <ul className='bg-slate-950 absolute top-10 border w-full rounded-b-lg max-h-40 overflow-auto'>
+                              {filteredTags.map(tag => (
+                                <li
+                                  key={tag._id}
+                                  onClick={() => {
+                                    setSelectedTags([
+                                      ...selectedTags,
+                                      tag.title
+                                    ])
+                                    setAlltagsId([...alltagsId, tag._id])
+                                    setInputValue('')
+                                  }}
+                                  className='px-3 py-2 text-white hover:bg-purple-600 cursor-pointer'
+                                >
+                                  {tag.title}
+                                </li>
+                              ))}
+                              {filteredTags.length === 0 && (
+                                <li className='text-gray-400 px-3 py-2'>
+                                  No matching tags
+                                </li>
+                              )}
+                            </ul>
+                          )}
+                        </div>
+                        {/* Display selected tags */}
+                        <div className='flex flex-wrap mt-4 gap-2 '>
+                          {selectedTags.map((tag, index) => (
+                            <div
+                              key={index}
+                              className='flex items-center bg-purple-400/20 px-2 py-1 rounded-lg text-sm'
+                            >
+                              {tag}
+                              <button
+                                type='button'
+                                onClick={() => {
+                                  setSelectedTags(
+                                    selectedTags.filter((_, i) => i !== index)
+                                  )
+                                  setAlltagsId(
+                                    alltagsId.filter((_, i) => i !== index)
+                                  )
+                                }}
+                                className='ml-2 text-red-600 hover:text-red-800'
+                              >
+                                &times;
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Submit Button */}
+                      <div className='flex flex-col sm:flex-row justify-end gap-2'>
+                        <Button
+                          onClick={closeCreateModal}
+                          variant={'ghost'}
+                          className='flex justify-center items-center gap-1 text-center rounded-md bg-transparent no-underline cursor-pointer shadow-2xl leading-6  text-white  border-[1px] border-slate-500 px-4 py-2 font-mono font-medium transition-colors hover:text-indigo-300'
+                        >
+                          Cancel
+                        </Button>
+
+                        <Button type='submit'>Create</Button>
+                      </div>
+                    </form>
                   </div>
-
-                  {/* Submit Button */}
-                  <div className='flex flex-col sm:flex-row justify-end gap-2'>
-                    <Button
-                      onClick={closeCreateModal}
-                      variant={'ghost'}
-                      className='flex justify-center items-center gap-1 text-center rounded-md bg-transparent no-underline cursor-pointer shadow-2xl leading-6  text-white  border-[1px] border-slate-500 px-4 py-2 font-mono font-medium transition-colors hover:text-indigo-300'
-                    >
-                      Cancel
-                    </Button>
-
-                    <Button type='submit'>Create</Button>
-                  </div>
-                </form>
+                )}
               </div>
             </div>
           )}
@@ -841,18 +822,7 @@ const Dashboard = () => {
                   <Switch
                     checked={isPublicAccess}
                     onCheckedChange={handlePublicAccessToggle}
-                    // checked={isPublicAccess}
-                    // onChange={handlePublicAccessToggle}
-                    // onCheckedChange={isChecked => handlePublicAccessToggle(isChecked)}
-                    //     isPublicAccess ? 'bg-blue-600' : 'bg-gray-200'
-                    // } relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
-                    // >
-                    // <span
-                    //     className={`${
-                    //     isPublicAccess ? 'translate-x-6' : 'translate-x-1'
-                    //     } inline-block w-4 h-4 transform bg-white rounded-full transition-transform`}
                   />
-                  {/* </Switch> */}
                 </div>
                 {<div>{hashVal}</div>}
                 <Separator />
@@ -882,7 +852,9 @@ const Dashboard = () => {
                     </div>
                   </div>
                   <div>
-                    <div className='w-32 h-32 bg-black text-center'>QR code</div>
+                    <div className='w-32 h-32 bg-black text-center'>
+                      QR code
+                    </div>
                   </div>
                 </div>
               </div>
@@ -938,7 +910,10 @@ const Dashboard = () => {
         </div>
         <Separator />
         <div className='flex gap-2 flex-1 h-full overflow-y-auto bg-slate-800/20 p-5'>
-          {serverdown ? (
+          { isLoading ? (<div className='w-full h-full flex flex-col justify-center items-center text-sm md:text-lg '>
+               <Loader2 className='animate-spin' />
+            </div>
+          ) : serverdown ? (
             <div className='w-full flex flex-col justify-center items-center text-sm md:text-lg '>
               <Frown /> server down <p className='text-sm'>try again later!!</p>
             </div>
@@ -968,35 +943,6 @@ const Dashboard = () => {
   )
 }
 
-// interface Thought {
-//     _id: string;
-//     link: string;
-//     type: string;
-//     title: string;
-//     description: string;
-//     tags: { _id: string; title: string }[];
-//     date: string;
-//     userId: string;
-// }
-
-// interface ThoughtProp extends Thought {
-//     userId: string;
-// }
-
-// type Type = {
-//     _id: string,
-//     title: string
-//   }
-//   type ThoughtProp = {
-//     _id: string,
-//     link: string,
-//     title: string,
-//     description?: string,
-//     date: string,
-//     tags?: Type[],
-//     type: string,
-//   }
-
 const DashboardContent = ({
   thoughtData,
   setThoughtData
@@ -1004,27 +950,6 @@ const DashboardContent = ({
   thoughtData: ThoughtProp[]
   setThoughtData: React.Dispatch<React.SetStateAction<ThoughtProp[]>>
 }) => {
-  // const [thoughtData, setThoughtData] = useState([{
-  //     _id: "12343452453341",
-  //     link: "https://localhost.com",
-  //     type: "video",
-  //     title: "new banger from vide",
-  //     description: "this is new banger vid",
-  //     tags: [
-  //         {
-  //             _id: "322341312324534",
-  //             title: "new"
-  //         },
-  //         {
-  //             _id: "322341312324534",
-  //             title: "newall"
-  //         }
-  //     ],
-  //     date: "2024-11-25T05:52:27.673Z",
-  //     userId: "67438023db4fea854fadb319"
-  // }]);
-  
-
   return (
     <div className='h-full w-full rounded-lg  '>
       <Thoughtcard thoughts={thoughtData} setThoughtData={setThoughtData} />
