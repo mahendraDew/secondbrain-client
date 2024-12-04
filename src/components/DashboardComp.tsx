@@ -12,6 +12,7 @@ import {
   Hash,
   Link,
   Loader2,
+  LogOut,
   Plus,
   Share2,
   Twitter,
@@ -28,8 +29,10 @@ import axios from 'axios'
 import { ApiRoutes } from '@/utils/routeAPI'
 import { ThoughtProp } from './type/thougthtype'
 import { Switch } from './ui/switch'
+import { useNavigate } from 'react-router-dom'
 
 export function DashboardComp () {
+  const navigate = useNavigate()
   const links = [
     {
       label: 'Tweets',
@@ -70,6 +73,18 @@ export function DashboardComp () {
   const [open, setOpen] = useState(false)
   const userData = JSON.parse(localStorage.getItem('user') || '{}') // Replace with your key
 
+  const [signOutConfirmationModel, setSignOutConfirmationModel] =
+    useState(false)
+
+  const signOut = () => {
+    setSignOutConfirmationModel(true)
+  }
+  const signOutHandler = () => {
+    localStorage.removeItem('user')
+    localStorage.removeItem('token')
+    navigate('/')
+  }
+
   return (
     <div
       className={cn(
@@ -87,28 +102,65 @@ export function DashboardComp () {
               ))}
             </div>
           </div>
-          <div className=''>
-            <SidebarLink
-              link={{
-                label: userData.username,
-                href: '/',
-                icon: (
-                  // <Img
-                  //     src='https://assets.aceternity.com/manu.png'
-                  //     className='h-7 w-7 flex-shrink-0 rounded-full'
-                  //     width={50}
-                  //     height={50}
-                  //     alt='Avatar'
-                  // />
-                  <span className='bg-gray-600 p-1 rounded-full'>
-                    <User />
-                  </span>
-                )
-              }}
-            />
+          <div className='   flex justify-between items-center'>
+            <div className='flex gap-2 justify-center items-center cursor-pointer'>
+              <span className='border-[1px] border-gray-100 p-1 rounded-full'>
+                <User className=' rounded-full' />
+              </span>
+              {open && <p>{userData.username}</p>}
+            </div>
+            {open && (
+              <a onClick={signOut}>
+                <LogOut className='hover:text-gray-100 text-gray-500 cursor-pointer' />
+              </a>
+            )}
           </div>
         </SidebarBody>
       </Sidebar>
+      {signOutConfirmationModel && (
+        <div
+          className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-55 transition-opacity duration-300'
+          onClick={() => setSignOutConfirmationModel(false)} // Close modal when clicking background
+        >
+          <div
+            onClick={e => e.stopPropagation()} // Prevents modal click from closing it
+            className='border border-black/[0.2] dark:border-white/[0.2]   bg-slate-950 p-6 rounded-lg shadow-lg w-full max-w-md transform transition-transform duration-300 scale-100'
+          >
+            <h2 className='text-white text-xl mb-4 text-center'>
+              Are you sure?
+            </h2>
+            <button
+              className='absolute top-4 right-6  rounded-full text-xs'
+              onClick={() => setSignOutConfirmationModel(false)}
+            >
+              <X className='h-5 w-5' />
+            </button>
+            <div className='w-full  flex gap-7 mt-2'>
+              <div className='w-full flex flex-col justify-center gap-5'>
+                <div className='text-sm text-gray-300 text-center '>
+                  Are you sure you want to sign out from your Secondbrain?
+                </div>
+                <div className='w-full mt-4 flex justify-center space-x-2 '>
+                  <button
+                    type='button'
+                    className='inline-flex justify-center px-4 py-2 text-sm font-medium   border border-gray-200 rounded-md hover:bg-gray-200/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-500'
+                    onClick={() => setSignOutConfirmationModel(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type='button'
+                    className='inline-flex justify-center px-4 py-2 text-sm font-medium text-black bg-purple-100 border border-transparent rounded-md hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500'
+                    onClick={signOutHandler}
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <Dashboard />
     </div>
   )
@@ -455,12 +507,13 @@ const Dashboard = () => {
           console.log(sharedHex.data.link.hash)
         } catch (error) {
           //   setServerdown(true)
-          console.log('kuch to error aaya:', error)
+          // console.log('kuch to error aaya:', error)
           setIsPublicAccess(false)
         }
       } else {
         // setServerdown(true);
-        console.log('pata nai kya error aaya!')
+        // console.log('pata nai kya error aaya!')
+        alert('Error: User is not defined')
       }
     }
     fetchUserContents()
@@ -487,10 +540,13 @@ const Dashboard = () => {
     }
   }
 
+  const [shareBtnLoading, setShareBtnLoading] = useState(false)
+
   const shareRequest = async (share: boolean) => {
     const shareBody = {
       share: share
     }
+    setShareBtnLoading(true)
 
     try {
       const config = {
@@ -501,9 +557,11 @@ const Dashboard = () => {
       }
 
       const res = await axios.post(ApiRoutes.share, shareBody, config)
+      const data = await res.data
       console.log(res)
       if (
         res.status === 201 ||
+        res.status === 200 ||
         res.statusText === 'OK' ||
         res.statusText.toLowerCase() === 'created'
       ) {
@@ -511,8 +569,10 @@ const Dashboard = () => {
         // Optionally reset the form fields
         //   resetForm();
         //   closeCreateModal();
-        console.log('hashvalue:', res.data.hashval)
-        setHashVal(res.data.hashval)
+        // const hashval = await res.data
+        console.log('hashval:', data.hashvalue)
+        console.log('hashvalue:', res.data.hashvalue)
+        setHashVal(data.hashvalue)
         // setThoughtData(prevThought => [...prevThought, data]) // Using functional update here
         // setNewDataUpdated(c => c + 1)
         // onClose()
@@ -525,6 +585,8 @@ const Dashboard = () => {
       console.log('Error submitting the form:', error)
       alert('An unexpected error occurred. Please try again.')
     }
+
+    setShareBtnLoading(false)
   }
 
   const confirmPublicAccess = async (
@@ -824,9 +886,13 @@ const Dashboard = () => {
                     onCheckedChange={handlePublicAccessToggle}
                   />
                 </div>
-                {<div>{hashVal}</div>}
+                {
+                  <div className='font-mono text-sm text-wrap'>
+                    hash: {hashVal}
+                  </div>
+                }
                 <Separator />
-                <div className='flex gap-7 mt-2'>
+                <div className='flex flex-col md:flex-row gap-7 mt-2'>
                   <div className='flex flex-col gap-5'>
                     <span className='text-sm text-gray-300'>
                       Share your entire collection of notes, documents, tweets,
@@ -839,8 +905,14 @@ const Dashboard = () => {
                         onClick={shareBrain}
                         disabled={!isPublicAccess}
                       >
-                        {<Copy />}
-                        Share brain
+                        {shareBtnLoading ? (
+                          <Loader2 className='animate-spin' />
+                        ) : (
+                          <>
+                            <Copy />
+                            Share brain
+                          </>
+                        )}
                       </Button>
                       <p
                         className={`text-sm text-purple-200 transition-opacity duration-300 ease-out ${
@@ -851,8 +923,8 @@ const Dashboard = () => {
                       </p>
                     </div>
                   </div>
-                  <div>
-                    <div className='w-32 h-32 bg-black text-center'>
+                  <div className='flex justify-center items-center'>
+                    <div className='w-64 h-64 md:w-32 md:h-32 bg-black text-center'>
                       QR code
                     </div>
                   </div>
@@ -910,8 +982,9 @@ const Dashboard = () => {
         </div>
         <Separator />
         <div className='flex gap-2 flex-1 h-full overflow-y-auto bg-slate-800/20 p-5'>
-          { isLoading ? (<div className='w-full h-full flex flex-col justify-center items-center text-sm md:text-lg '>
-               <Loader2 className='animate-spin' />
+          {isLoading ? (
+            <div className='w-full h-full flex flex-col justify-center items-center text-sm md:text-lg '>
+              <Loader2 className='animate-spin' />
             </div>
           ) : serverdown ? (
             <div className='w-full flex flex-col justify-center items-center text-sm md:text-lg '>
