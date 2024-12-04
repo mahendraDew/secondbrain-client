@@ -7,6 +7,7 @@ export default function Footer () {
           <a
             href='https://x.com/mahendra_dew'
             className='underline hover:text-white transition-colors'
+            target="_blank"
           >
             Mahendra
           </a>
