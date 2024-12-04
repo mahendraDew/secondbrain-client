@@ -141,11 +141,11 @@ export default function SignUp() {
           </div>
           <p className="px-8 text-center text-sm text-muted-foreground">
             By clicking continue, you agree to our{" "}
-            <a href="/tos" className="hover:text-brand underline underline-offset-4">
+            <a href="/tos" className="hover:text-brand underline hover:text-gray-200 underline-offset-4">
               Terms of Service
             </a>{" "}
             and{" "}
-            <a href="/privacy" className="hover:text-brand underline underline-offset-4">
+            <a href="/privacy" className="hover:text-brand hover:text-gray-200 underline underline-offset-4">
               Privacy Policy
             </a>
             .
@@ -153,7 +153,7 @@ export default function SignUp() {
           <p className="px-8 text-center text-sm text-muted-foreground">
             <a
               href="/signin"
-              className="hover:text-brand underline underline-offset-4"
+              className="hover:text-brand hover:text-gray-200 underline underline-offset-4"
             >
               Already have an account? Sign In
             </a>
