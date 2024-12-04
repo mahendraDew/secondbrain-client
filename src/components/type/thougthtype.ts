@@ -12,3 +12,7 @@ type Type = {
     _id: string,
     title: string
 }
+
+
+
+export type ThoughtCardType = 'video' | 'image' | 'article' | 'tweet' | 'link' | null ;

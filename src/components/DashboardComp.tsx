@@ -7,7 +7,9 @@ import {
   BadgeX,
   BrainCircuit,
   Copy,
+  FileImage,
   FileText,
+  Filter,
   Frown,
   Hash,
   Link,
@@ -27,7 +29,7 @@ import Thoughtcard from './Thoughtcard'
 
 import axios from 'axios'
 import { ApiRoutes } from '@/utils/routeAPI'
-import { ThoughtProp } from './type/thougthtype'
+import { ThoughtCardType, ThoughtProp } from './type/thougthtype'
 import { Switch } from './ui/switch'
 import { useNavigate } from 'react-router-dom'
 
@@ -35,43 +37,41 @@ export function DashboardComp () {
   const navigate = useNavigate()
   const links = [
     {
-      label: 'Tweets',
-      href: '#tweets',
+      label: 'Tweet',
       icon: (
         <Twitter className='text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0' />
       )
     },
     {
-      label: 'Videos',
-      href: '#',
+      label: 'Video',
       icon: (
         <Youtube className='text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0' />
       )
     },
     {
-      label: 'Documents',
-      href: '#',
-      icon: (
-        <FileText className='text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0' />
-      )
-    },
-    {
-      label: 'Links',
-      href: '#',
+      label: 'Link',
       icon: (
         <Link className='text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0' />
       )
     },
     {
-      label: 'Tags',
-      href: '#',
+      label: 'Image',
       icon: (
-        <Hash className='text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0' />
+        <FileImage className='text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0' />
+      )
+    },
+    {
+      label: 'Article',
+      icon: (
+        <FileText className='text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0' />
       )
     }
+   
   ]
   const [open, setOpen] = useState(false)
   const userData = JSON.parse(localStorage.getItem('user') || '{}') // Replace with your key
+
+  const [selectedType, setSelectedType] = useState<ThoughtCardType>(null);
 
   const [signOutConfirmationModel, setSignOutConfirmationModel] =
     useState(false)
@@ -98,7 +98,7 @@ export function DashboardComp () {
             {open ? <Logo /> : <LogoIcon />}
             <div className='mt-8 flex flex-col gap-2 '>
               {links.map((link, idx) => (
-                <SidebarLink key={idx} link={link} />
+                <SidebarLink key={idx} link={link} selectedType={selectedType} onSelectType={setSelectedType}/>
               ))}
             </div>
           </div>
@@ -161,7 +161,7 @@ export function DashboardComp () {
           </div>
         </div>
       )}
-      <Dashboard />
+      <Dashboard selectedType={selectedType} setSelectedType={setSelectedType}/>
     </div>
   )
 }
@@ -200,7 +200,7 @@ export const LogoIcon = () => {
 }
 
 // Dummy dashboard component with content
-const Dashboard = () => {
+const Dashboard = ({selectedType, setSelectedType}: {selectedType: ThoughtCardType, setSelectedType: React.Dispatch<React.SetStateAction<ThoughtCardType>>}) => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -603,17 +603,10 @@ const Dashboard = () => {
     shareRequest(true)
   }
 
-  // if (isLoading)
-  //   return (
-  //     <div className='w-full h-screen flex flex-col justify-center items-center text-sm md:text-lg '>
-  //       <Loader2 className='animate-spin' />
-  //     </div>
-  //   )
-
   return (
     <div className='flex flex-1'>
       <div className='p-10 md:p-10 rounded-tl-2xl  bg-transparent flex flex-col gap-2 flex-1 w-full h-full'>
-        <div className='flex gap-2'>
+        <div className='flex flex-col gap-2 '>
           <div className='h-20 w-full rounded-lg  flex justify-between items-center '>
             <div>
               <h1 className='text-xl md:text-3xl'>My brain</h1>
@@ -633,6 +626,13 @@ const Dashboard = () => {
               </Button>
             </div>
           </div>
+          {selectedType && <div className='flex items-center gap-2 text-md'>
+            <div className='bg-purple-200/10 rounded-full px-3 flex justify-center items-center gap-1'>
+              <Filter className='w-4 h-4'/> 
+              {selectedType} 
+              <X className='h-4 w-4 text-red-700 hover:text-red-300 cursor-pointer' onClick={() => setSelectedType(null)}/> 
+            </div>
+            </div>}
           {isCreateModalOpen && (
             <div
               className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300'
@@ -1008,6 +1008,7 @@ const Dashboard = () => {
             <DashboardContent
               thoughtData={thoughtData}
               setThoughtData={setThoughtData}
+              selectedType={selectedType}
             />
           )}
         </div>
@@ -1018,14 +1019,16 @@ const Dashboard = () => {
 
 const DashboardContent = ({
   thoughtData,
-  setThoughtData
+  setThoughtData,
+  selectedType
 }: {
-  thoughtData: ThoughtProp[]
-  setThoughtData: React.Dispatch<React.SetStateAction<ThoughtProp[]>>
+  thoughtData: ThoughtProp[],
+  setThoughtData: React.Dispatch<React.SetStateAction<ThoughtProp[]>>,
+  selectedType:ThoughtCardType;
 }) => {
   return (
     <div className='h-full w-full rounded-lg  '>
-      <Thoughtcard thoughts={thoughtData} setThoughtData={setThoughtData} />
+      <Thoughtcard thoughts={thoughtData} setThoughtData={setThoughtData} selectedType={selectedType}/>
     </div>
   )
 }

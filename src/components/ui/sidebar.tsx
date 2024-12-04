@@ -2,10 +2,11 @@ import { cn } from "@/lib/utils";
 import React, { useState, createContext, useContext } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { BrainCircuit, Menu, X } from "lucide-react";
+import { ThoughtCardType } from "../type/thougthtype";
 
 interface Links {
   label: string;
-  href: string;
+  // href: string;
   icon: React.JSX.Element | React.ReactNode;
 }
 
@@ -159,21 +160,26 @@ export const MobileSidebar = ({
 export const SidebarLink = ({
   link,
   className,
+  selectedType, 
+  onSelectType,
   ...props
 }: {
   link: Links;
+  selectedType: ThoughtCardType;
+  onSelectType: React.Dispatch<React.SetStateAction<ThoughtCardType>>;
   className?: string;
   props?: string;
 }) => {
   const { open, animate } = useSidebar();
   return (
     <a
-      href={link.href}
+      // href={link.href}
       className={cn(
-        "flex items-center justify-start gap-2  group/sidebar py-2",
+        "flex items-center justify-start gap-2  group/sidebar py-2 cursor-pointer",
         className
       )}
       {...props}
+      onClick={() => onSelectType(selectedType === link.label.toLowerCase() ? "" as ThoughtCardType : link.label.toLowerCase() as ThoughtCardType)}
     >
       {link.icon}
 
