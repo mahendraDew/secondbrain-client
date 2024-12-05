@@ -32,6 +32,9 @@ import { ThoughtCardType, ThoughtProp } from './type/thougthtype'
 import { Switch } from './ui/switch'
 import { useNavigate } from 'react-router-dom'
 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+
+
 export function DashboardComp () {
   const navigate = useNavigate()
   const links = [
@@ -209,7 +212,7 @@ const Dashboard = ({selectedType, setSelectedType}: {selectedType: ThoughtCardTy
   const [description, setDescription] = useState('')
   const [date] = useState(new Date().toISOString().slice(0, 10))
   const [alltagsId, setAlltagsId] = useState<string[]>([])
-  const [type, setType] = useState('tweet')
+  const [type, setType] = useState('article')
   const [link, setLink] = useState('')
   const [validateFormErr, setValidateFormErr] = useState<{
     [key: string]: string
@@ -334,9 +337,8 @@ const Dashboard = ({selectedType, setSelectedType}: {selectedType: ThoughtCardTy
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setCreateCardLoading(true)
-
+    e.preventDefault();
+    
     // Validate form fields
     let newErrors: { [key: string]: string } = {}
     if (!title.trim()) {
@@ -351,23 +353,24 @@ const Dashboard = ({selectedType, setSelectedType}: {selectedType: ThoughtCardTy
     if (alltagsId.length <= 0) {
       newErrors.tag = 'Add atleast one tag.'
     }
-
+    
     if (Object.keys(newErrors).length > 0) {
       setValidateFormErr(newErrors)
       return
     }
-
+    
     const userData = JSON.parse(localStorage.getItem('user') || '{}') // Replace with your key
     const userId = userData ? userData.id : null
-
+    
     console.log('type:', type)
     console.log(type)
-
+    
     if (type === undefined || type === '' || type === null) {
       setType('article')
     }
     console.log({ title, description, date, alltagsId, type, link, userId })
-
+    setCreateCardLoading(true)
+    
     const newcontent = {
       title,
       description,
@@ -457,7 +460,7 @@ const Dashboard = ({selectedType, setSelectedType}: {selectedType: ThoughtCardTy
 
   useEffect(() => {
     setIsLoading(true)
-    console.log('useeffect called out')
+    // console.log('useeffect called out')
     const fetchUserContents = async () => {
       const userData = localStorage.getItem('user')
         ? JSON.parse(localStorage.getItem('user') || '{}')
@@ -482,7 +485,7 @@ const Dashboard = ({selectedType, setSelectedType}: {selectedType: ThoughtCardTy
         }
       } else {
         setServerdown(true)
-        console.log('server error!')
+        // console.log('server error!')
       }
       setIsLoading(false)
     }
@@ -500,10 +503,10 @@ const Dashboard = ({selectedType, setSelectedType}: {selectedType: ThoughtCardTy
           const sharedHex = await axios.get(
             ApiRoutes.shareHexVal + '/' + userId
           )
-          console.log(sharedHex)
+          // console.log(sharedHex)
           setHashVal(sharedHex.data.link.hash)
           setIsPublicAccess(true)
-          console.log(sharedHex.data.link.hash)
+          // console.log(sharedHex.data.link.hash)
         } catch (error) {
           //   setServerdown(true)
           // console.log('kuch to error aaya:', error)
@@ -602,6 +605,155 @@ const Dashboard = ({selectedType, setSelectedType}: {selectedType: ThoughtCardTy
     shareRequest(true)
   }
 
+
+  //-------------------------------------------------import stuff------------------------------------------
+
+  const [importLink, setImportLink] = useState('');
+
+  const ImportLinkSubmit = async (e: React.FormEvent) => {
+    console.log("ImportLinkSubmit called");
+    e.preventDefault()
+    
+    
+    
+    // here we have to check if the import link is yt link or x link 
+    const youtubeVideoId = getYouTubeVideoId(importLink);
+    // const tweetId = getTweetId(importLink);
+
+
+    if(youtubeVideoId){
+      // Validate form fields
+      let newErrors: { [key: string]: string } = {}
+      if (!importLink.trim() || !isValidURL(importLink)) {
+        newErrors.importLink = 'A valid import link is required.'
+      }
+      if (importLink.trim() === '') {
+        newErrors.importLink = 'Please enter a YouTube URL';
+      }
+      const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
+      if (!youtubeRegex.test(importLink)) {
+        newErrors.importLink = 'Please enter a valid YouTube URL';
+      }
+      const videoId = getYouTubeVideoId(importLink);
+      if (!videoId) {
+        newErrors.importLink = 'Invalid YouTube URL';
+      }
+      if (Object.keys(newErrors).length > 0) {
+        setValidateFormErr(newErrors)
+        setTimeout(() => {
+          setValidateFormErr({});
+        }, 3000);
+        return
+      }
+
+      try {
+        const videoDetails = videoId ? await fetchVideoDetails(videoId) : { title: '', description: '' };
+        const { title, description } = videoDetails;        
+
+        const userData = JSON.parse(localStorage.getItem('user') || '{}') // Replace with your key
+        const userId = userData ? userData.id : null
+        const tagId = addingFixedTags("youtube");
+        const alltagId: string[] = [];
+        if(tagId){
+          alltagId[0] = tagId;
+        }
+        
+        console.log({ title, description, date, alltagsId:alltagId, type: 'video', link:importLink, userId })
+        setCreateCardLoading(true)
+        
+        const newcontent = {
+          title,
+          description,
+          link:importLink,
+          type: "video",
+          tags: alltagId,
+          userId
+        }
+  
+        try {
+          // Call the backend endpoint
+          const config = {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
+          const response = await axios.post(ApiRoutes.create, newcontent, config)
+          const data = await response.data
+          if (response.status === 201) {
+            setThoughtData(prevThought => [...prevThought, data]) // Using functional update here
+            setNewDataUpdated(c => c + 1)
+            onClose()
+          } else {
+            // Handle server errors
+            const errorData = await response.data
+            alert(`Error: ${errorData.message || 'Submission failed'}`)
+          }
+        } catch (error) {
+          console.log('Error submitting the form:', error)
+          alert('An unexpected error occurred. Please try again.')
+        }
+  
+        setTitle('')
+        setDescription('')
+        setAlltagsId([]), setType('')
+        setLink('')
+        setValidateFormErr({})
+        // setCreateCardLoading(false)
+        onClose()
+        setImportLink('');
+        
+      } catch (err) {
+        console.error('Error adding video:', err);
+        newErrors.importLink = 'Error adding video. Please try again.';
+        if (Object.keys(newErrors).length > 0) {
+          setValidateFormErr(newErrors)
+          setTimeout(() => {
+            setValidateFormErr({});
+          }, 3000);
+          return
+        }
+      }
+
+    }
+    
+    // console.log("Import link:",importLink)
+    // setCreateCardLoading(true);
+
+    
+  }
+
+  const getYouTubeVideoId = (url: string): string | null => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  };
+
+  const fetchVideoDetails = async (videoId: string): Promise<{ title: string; description: string }> => {
+    try {
+      const response = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${videoId}`);
+      const data = await response.json();
+      const title = data.title || `YouTube Video (${videoId})`;
+      const fullDescription = data.author_name + "'s youtube video on - " + title || '';
+      const description = fullDescription.split('\n').slice(0, 5).join('\n');
+      return { title, description };
+    } catch (error) {
+      console.error('Error fetching video details:', error);
+      return { title: `You"3Blue1Brown's youtube video on - Transformers (how LLMs work) explained visually | DL5"Tube Video (${videoId})`, description: '' };
+    }
+  };
+
+  const addingFixedTags = (fixtag: string) => {
+    console.log("addeing fix tag fun called")
+    const existingTag = alltags.find(
+      tag => tag.title === fixtag.trim().toLowerCase()
+    )
+    if (existingTag) {
+      // Add to selected tags if it exists
+      console.log("tag is : ",existingTag.title , existingTag._id)
+      return existingTag._id;
+    } 
+  } 
+
   return (
     <div className='flex flex-1'>
       <div className='p-10 md:p-10 rounded-tl-2xl  bg-transparent flex flex-col gap-2 flex-1 w-full h-full'>
@@ -634,7 +786,7 @@ const Dashboard = ({selectedType, setSelectedType}: {selectedType: ThoughtCardTy
             </div>}
           {isCreateModalOpen && (
             <div
-              className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300'
+              className='fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300'
               onClick={onClose} // Close modal when clicking background
             >
               <div
@@ -647,212 +799,454 @@ const Dashboard = ({selectedType, setSelectedType}: {selectedType: ThoughtCardTy
                     <Loader2 className='animate-spin' />
                   </div>
                 ) : (
-                  <div>
-                    <h2 className='text-white text-xl mb-4 text-center'>
-                      New Thought
-                    </h2>
-                    <p className='text-center text-gray-400'>
-                      Save your new thought before you forget it
-                    </p>
-                    <button
-                      className='absolute top-4 right-6  rounded-full text-xs'
-                      onClick={onClose}
-                    >
-                      <X className='h-5 w-5' />
-                    </button>
-
-                    <form
-                      onSubmit={handleSubmit}
-                      className='text-white px-4 sm:px-6 md:px-8 lg:px-10 py-4'
-                    >
-                      {/* Title */}
-                      <div className='mb-4'>
-                        <label className='block text-sm font-medium text-gray-500 mb-1'>
-                          Title:
-                        </label>
-                        <input
-                          type='text'
-                          className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
-                          value={title}
-                          onChange={e => setTitle(e.target.value)}
-                          required
-                        />
-                        {validateFormErr.title && (
-                          <p className='text-sm text-red-500'>
-                            {validateFormErr.title}
-                          </p>
-                        )}
-                      </div>
-
-                      {/* Description */}
-                      <div className='mb-4'>
-                        <label className='block text-sm font-medium text-gray-500 mb-1'>
-                          Description:
-                        </label>
-                        <textarea
-                          className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
-                          rows={3}
-                          value={description}
-                          onChange={e => setDescription(e.target.value)}
-                          required
-                        ></textarea>
-                        {validateFormErr.description && (
-                          <p className='text-sm text-red-500'>
-                            {validateFormErr.description}
-                          </p>
-                        )}
-                      </div>
-
-                      {/* Type Selection */}
-                      <div className='mb-4'>
-                        <label className='block text-sm font-medium text-gray-500 mb-1'>
-                          Type:
-                        </label>
-                        <select
-                          className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
-                          value={type}
-                          onChange={e => {
-                            console.log('select called')
-                            setType(e.target.value.toLowerCase())
-                            console.log('type:', type.toLowerCase())
-                          }}
+                  <Tabs defaultValue='automatic' className='w-full '>
+                    <TabsList className=' w-full'>
+                      <TabsTrigger value='automatic' className='w-full'>
+                        Automatic
+                      </TabsTrigger>
+                      <TabsTrigger value='manual' className='w-full'>
+                        Manual
+                      </TabsTrigger>
+                    </TabsList>
+                    <TabsContent value='automatic'>
+                      <div>
+                        <h2 className='text-white text-xl mb-4 text-center'>
+                          New Thought
+                        </h2>
+                        <p className='text-center text-gray-400'>
+                          import your thought before you forget it
+                        </p>
+                        <button
+                          className='absolute -top-4 -right-6  rounded-full text-xs'
+                          onClick={onClose}
                         >
-                          <option value='tweet' className='bg-slate-950'>
-                            Tweet
-                          </option>
-                          <option value='video' className='bg-slate-950'>
-                            Video
-                          </option>
-                          <option value='link' className='bg-slate-950'>
-                            Link
-                          </option>
-                          <option value='image' className='bg-slate-950'>
-                            Image
-                          </option>
-                          <option value='article' className='bg-slate-950'>
-                            Article
-                          </option>
-                        </select>
-                      </div>
+                          <X className='h-5 w-5' />
+                        </button>
 
-                      {/* Link */}
-                      <div className='mb-4'>
-                        <label className='block text-sm font-medium text-gray-500 mb-1'>
-                          Ref Link:
-                        </label>
-                        <input
-                          type='text'
-                          className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
-                          value={link}
-                          onChange={e => setLink(e.target.value)}
-                          required
-                        />
-                        {validateFormErr.link && (
-                          <p className='text-sm text-red-500'>
-                            {validateFormErr.link}
-                          </p>
-                        )}
-                      </div>
+                        <form
+                          onSubmit={ImportLinkSubmit}
+                          className='text-white px-4 sm:px-6 md:px-8 lg:px-10 py-4'
+                        > 
+                          {/* Import Link */}
+                          <div className='mb-4'>
+                            <label className='block text-sm font-medium text-gray-50 mb-1'>
+                              Import from Link:
+                            </label>
+                            <input
+                              type='text'
+                              placeholder='paste your link here'
+                              className='w-full px-3 py-2 border border-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
+                              value={importLink}
+                              onChange={e => setImportLink(e.target.value)}
+                              required
+                            />
+                            {validateFormErr.importLink && (
+                              <p className='text-sm text-red-500'>
+                                {validateFormErr.importLink}
+                              </p>
+                            )}
+                            <Button className='mt-3 w-full ' disabled={importLink ? false : true} type='submit'>Import</Button>
+                          </div>
+                         
+                          {/* Title */}
+                          {/* <div className='mb-4'>
+                            <label className='block text-sm font-medium text-gray-500 mb-1'>
+                              Title:
+                            </label>
+                            <input
+                              type='text'
+                              className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
+                              value={title}
+                              onChange={e => setTitle(e.target.value)}
+                              
+                            />
+                            {validateFormErr.title && (
+                              <p className='text-sm text-red-500'>
+                                {validateFormErr.title}
+                              </p>
+                            )}
+                          </div> */}
 
-                      {/* Date */}
-                      <div className='mb-4'>
-                        <label className='block text-sm font-medium text-gray-500 mb-1'>
-                          Date:
-                        </label>
-                        <div className='mt-1 w-full px-3 py-2 border rounded-lg shadow-sm bg-transparent dark:text-white'>
-                          {date}
-                        </div>
-                      </div>
+                          {/* Description */}
+                          {/* <div className='mb-4'>
+                            <label className='block text-sm font-medium text-gray-500 mb-1'>
+                              Description:
+                            </label>
+                            <textarea
+                              className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
+                              rows={3}
+                              value={description}
+                              onChange={e => setDescription(e.target.value)}
+                              
+                            ></textarea>
+                            {validateFormErr.description && (
+                              <p className='text-sm text-red-500'>
+                                {validateFormErr.description}
+                              </p>
+                            )}
+                          </div> */}
 
-                      {/* Tags input */}
-                      <div className='mb-4'>
-                        <label className='block text-sm font-medium text-gray-500 mb-1'>
-                          Tags:
-                        </label>
-                        <div className='relative flex flex-col'>
-                          <input
-                            type='text'
-                            className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
-                            value={inputValue}
-                            onChange={handleInputChange}
-                            onKeyDown={addTag}
-                            // onKeyDown={(e) => e.key === 'Enter' && addTag(e)}
-                            placeholder='Add tags and press Enter'
-                          />
-                          {validateFormErr.tag && alltagsId.length <= 0 && (
-                            <p className='text-sm text-red-500 text-left'>
-                              {validateFormErr.tag}
-                            </p>
-                          )}
-
-                          {/* Dropdown for filtered tags */}
-                          {inputValue && (
-                            <ul className='bg-slate-950 absolute top-10 border w-full rounded-b-lg max-h-40 overflow-auto'>
-                              {filteredTags.map(tag => (
-                                <li
-                                  key={tag._id}
-                                  onClick={() => {
-                                    setSelectedTags([
-                                      ...selectedTags,
-                                      tag.title
-                                    ])
-                                    setAlltagsId([...alltagsId, tag._id])
-                                    setInputValue('')
-                                  }}
-                                  className='px-3 py-2 text-white hover:bg-purple-600 cursor-pointer'
-                                >
-                                  {tag.title}
-                                </li>
-                              ))}
-                              {filteredTags.length === 0 && (
-                                <li className='text-gray-400 px-3 py-2'>
-                                  No matching tags
-                                </li>
-                              )}
-                            </ul>
-                          )}
-                        </div>
-                        {/* Display selected tags */}
-                        <div className='flex flex-wrap mt-4 gap-2 '>
-                          {selectedTags.map((tag, index) => (
-                            <div
-                              key={index}
-                              className='flex items-center bg-purple-400/20 px-2 py-1 rounded-lg text-sm'
+                          {/* Type Selection */}
+                          {/* <div className='mb-4'>
+                            <label className='block text-sm font-medium text-gray-500 mb-1'>
+                              Type:
+                            </label>
+                            <select
+                              className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
+                              value={type}
+                              onChange={e => {
+                                console.log('select called')
+                                setType(e.target.value.toLowerCase())
+                                console.log('type:', type.toLowerCase())
+                              }}
                             >
-                              {tag}
-                              <button
-                                type='button'
-                                onClick={() => {
-                                  setSelectedTags(
-                                    selectedTags.filter((_, i) => i !== index)
-                                  )
-                                  setAlltagsId(
-                                    alltagsId.filter((_, i) => i !== index)
-                                  )
-                                }}
-                                className='ml-2 text-red-600 hover:text-red-800'
-                              >
-                                &times;
-                              </button>
+                              <option value='tweet' className='bg-slate-950'>
+                                Tweet
+                              </option>
+                              <option value='video' className='bg-slate-950'>
+                                Video
+                              </option>
+                              <option value='link' className='bg-slate-950'>
+                                Link
+                              </option>
+                              <option value='image' className='bg-slate-950'>
+                                Image
+                              </option>
+                              <option value='article' className='bg-slate-950'>
+                                Article
+                              </option>
+                            </select>
+                          </div> */}
+
+                          {/* Link */}
+                          {/* <div className='mb-4'>
+                            <label className='block text-sm font-medium text-gray-500 mb-1'>
+                              Ref Link:
+                            </label>
+                            <input
+                              type='text'
+                              className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
+                              value={link}
+                              onChange={e => setLink(e.target.value)}
+                              required
+                            />
+                            {validateFormErr.link && (
+                              <p className='text-sm text-red-500'>
+                                {validateFormErr.link}
+                              </p>
+                            )}
+                          </div> */}
+
+                          {/* Date */}
+                          {/* <div className='mb-4'>
+                            <label className='block text-sm font-medium text-gray-500 mb-1'>
+                              Date:
+                            </label>
+                            <div className='mt-1 w-full px-3 py-2 border rounded-lg shadow-sm bg-transparent dark:text-white'>
+                              {date}
                             </div>
-                          ))}
-                        </div>
-                      </div>
+                          </div> */}
 
-                      {/* Submit Button */}
-                      <div className='flex flex-col sm:flex-row justify-end gap-2'>
-                        <Button
-                          onClick={closeCreateModal}
-                          variant={'ghost'}
-                          className='flex justify-center items-center gap-1 text-center rounded-md bg-transparent no-underline cursor-pointer shadow-2xl leading-6  text-white  border-[1px] border-slate-500 px-4 py-2 font-mono font-medium transition-colors hover:text-indigo-300'
+                          {/* Tags input */}
+                          {/* <div className='mb-4'>
+                            <label className='block text-sm font-medium text-gray-500 mb-1'>
+                              Tags:
+                            </label>
+                            <div className='relative flex flex-col'>
+                              <input
+                                type='text'
+                                className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
+                                value={inputValue}
+                                onChange={handleInputChange}
+                                onKeyDown={addTag}
+                                placeholder='Add tags and press Enter'
+                              />
+                              {validateFormErr.tag && alltagsId.length <= 0 && (
+                                <p className='text-sm text-red-500 text-left'>
+                                  {validateFormErr.tag}
+                                </p>
+                              )}
+
+                              {inputValue && (
+                                <ul className='bg-slate-950 absolute top-10 border w-full rounded-b-lg max-h-40 overflow-auto'>
+                                  {filteredTags.map(tag => (
+                                    <li
+                                      key={tag._id}
+                                      onClick={() => {
+                                        setSelectedTags([
+                                          ...selectedTags,
+                                          tag.title
+                                        ])
+                                        setAlltagsId([...alltagsId, tag._id])
+                                        setInputValue('')
+                                      }}
+                                      className='px-3 py-2 text-white hover:bg-purple-600 cursor-pointer'
+                                    >
+                                      {tag.title}
+                                    </li>
+                                  ))}
+                                  {filteredTags.length === 0 && (
+                                    <li className='text-gray-400 px-3 py-2'>
+                                      No matching tags
+                                    </li>
+                                  )}
+                                </ul>
+                              )}
+                            </div>
+                            <div className='flex flex-wrap mt-4 gap-2 '>
+                              {selectedTags.map((tag, index) => (
+                                <div
+                                  key={index}
+                                  className='flex items-center bg-purple-400/20 px-2 py-1 rounded-lg text-sm'
+                                >
+                                  {tag}
+                                  <button
+                                    type='button'
+                                    onClick={() => {
+                                      setSelectedTags(
+                                        selectedTags.filter(
+                                          (_, i) => i !== index
+                                        )
+                                      )
+                                      setAlltagsId(
+                                        alltagsId.filter((_, i) => i !== index)
+                                      )
+                                    }}
+                                    className='ml-2 text-red-600 hover:text-red-800'
+                                  >
+                                    &times;
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          </div> */}
+
+                          {/* Submit Button */}
+                          {/* <div className='flex flex-col sm:flex-row justify-end gap-2'>
+                            <Button
+                              onClick={closeCreateModal}
+                              variant={'ghost'}
+                              className='flex justify-center items-center gap-1 text-center rounded-md bg-transparent no-underline cursor-pointer shadow-2xl leading-6  text-white  border-[1px] border-slate-500 px-4 py-2 font-mono font-medium transition-colors hover:text-indigo-300'
+                            >
+                              Cancel
+                            </Button>
+
+                            <Button type='submit'>Create</Button>
+                          </div> */}
+                        </form>
+                      </div>
+                    </TabsContent>
+                    <TabsContent value='manual'>
+                      <div>
+                        <h2 className='text-white text-xl mb-4 text-center'>
+                          New Thought
+                        </h2>
+                        <p className='text-center text-gray-400'>
+                          Save your new thought before you forget it
+                        </p>
+                        <button
+                          className='absolute -top-4 -right-6  rounded-full text-xs'
+                          onClick={onClose}
                         >
-                          Cancel
-                        </Button>
+                          <X className='h-5 w-5' />
+                        </button>
 
-                        <Button type='submit'>Create</Button>
+                        <form
+                          onSubmit={handleSubmit}
+                          className='text-white px-4 sm:px-6 md:px-8 lg:px-10 py-4'
+                        >
+                          {/* Title */}
+                          <div className='mb-4'>
+                            <label className='block text-sm font-medium text-gray-500 mb-1'>
+                              Title:
+                            </label>
+                            <input
+                              type='text'
+                              className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
+                              value={title}
+                              onChange={e => setTitle(e.target.value)}
+                              required
+                            />
+                            {validateFormErr.title && (
+                              <p className='text-sm text-red-500'>
+                                {validateFormErr.title}
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Description */}
+                          <div className='mb-4'>
+                            <label className='block text-sm font-medium text-gray-500 mb-1'>
+                              Description:
+                            </label>
+                            <textarea
+                              className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
+                              rows={3}
+                              value={description}
+                              onChange={e => setDescription(e.target.value)}
+                              required
+                            ></textarea>
+                            {validateFormErr.description && (
+                              <p className='text-sm text-red-500'>
+                                {validateFormErr.description}
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Type Selection */}
+                          <div className='mb-4'>
+                            <label className='block text-sm font-medium text-gray-500 mb-1'>
+                              Type:
+                            </label>
+                            <select
+                              className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
+                              value={type}
+                              onChange={e => {
+                                console.log('select called')
+                                setType(e.target.value.toLowerCase())
+                                console.log('type:', type.toLowerCase())
+                              }}
+                            >
+                              <option value='tweet' className='bg-slate-950'>
+                                Tweet
+                              </option>
+                              <option value='video' className='bg-slate-950'>
+                                Video
+                              </option>
+                              <option value='link' className='bg-slate-950'>
+                                Link
+                              </option>
+                              <option value='image' className='bg-slate-950'>
+                                Image
+                              </option>
+                              <option value='article' className='bg-slate-950'>
+                                Article
+                              </option>
+                            </select>
+                          </div>
+
+                          {/* Link */}
+                          <div className='mb-4'>
+                            <label className='block text-sm font-medium text-gray-500 mb-1'>
+                              Ref Link:
+                            </label>
+                            <input
+                              type='text'
+                              className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
+                              value={link}
+                              onChange={e => setLink(e.target.value)}
+                              required
+                            />
+                            {validateFormErr.link && (
+                              <p className='text-sm text-red-500'>
+                                {validateFormErr.link}
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Date */}
+                          <div className='mb-4'>
+                            <label className='block text-sm font-medium text-gray-500 mb-1'>
+                              Date:
+                            </label>
+                            <div className='mt-1 w-full px-3 py-2 border rounded-lg shadow-sm bg-transparent dark:text-white'>
+                              {date}
+                            </div>
+                          </div>
+
+                          {/* Tags input */}
+                          <div className='mb-4'>
+                            <label className='block text-sm font-medium text-gray-500 mb-1'>
+                              Tags:
+                            </label>
+                            <div className='relative flex flex-col'>
+                              <input
+                                type='text'
+                                className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
+                                value={inputValue}
+                                onChange={handleInputChange}
+                                onKeyDown={addTag}
+                                // onKeyDown={(e) => e.key === 'Enter' && addTag(e)}
+                                placeholder='Add tags and press Enter'
+                              />
+                              {validateFormErr.tag && alltagsId.length <= 0 && (
+                                <p className='text-sm text-red-500 text-left'>
+                                  {validateFormErr.tag}
+                                </p>
+                              )}
+
+                              {/* Dropdown for filtered tags */}
+                              {inputValue && (
+                                <ul className='bg-slate-950 absolute top-10 border w-full rounded-b-lg max-h-40 overflow-auto'>
+                                  {filteredTags.map(tag => (
+                                    <li
+                                      key={tag._id}
+                                      onClick={() => {
+                                        setSelectedTags([
+                                          ...selectedTags,
+                                          tag.title
+                                        ])
+                                        setAlltagsId([...alltagsId, tag._id])
+                                        setInputValue('')
+                                      }}
+                                      className='px-3 py-2 text-white hover:bg-purple-600 cursor-pointer'
+                                    >
+                                      {tag.title}
+                                    </li>
+                                  ))}
+                                  {filteredTags.length === 0 && (
+                                    <li className='text-gray-400 px-3 py-2'>
+                                      No matching tags
+                                    </li>
+                                  )}
+                                </ul>
+                              )}
+                            </div>
+                            {/* Display selected tags */}
+                            <div className='flex flex-wrap mt-4 gap-2 '>
+                              {selectedTags.map((tag, index) => (
+                                <div
+                                  key={index}
+                                  className='flex items-center bg-purple-400/20 px-2 py-1 rounded-lg text-sm'
+                                >
+                                  {tag}
+                                  <button
+                                    type='button'
+                                    onClick={() => {
+                                      setSelectedTags(
+                                        selectedTags.filter(
+                                          (_, i) => i !== index
+                                        )
+                                      )
+                                      setAlltagsId(
+                                        alltagsId.filter((_, i) => i !== index)
+                                      )
+                                    }}
+                                    className='ml-2 text-red-600 hover:text-red-800'
+                                  >
+                                    &times;
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Submit Button */}
+                          <div className='flex flex-col sm:flex-row justify-end gap-2'>
+                            <Button
+                              onClick={closeCreateModal}
+                              variant={'ghost'}
+                              className='flex justify-center items-center gap-1 text-center rounded-md bg-transparent no-underline cursor-pointer shadow-2xl leading-6  text-white  border-[1px] border-slate-500 px-4 py-2 font-mono font-medium transition-colors hover:text-indigo-300'
+                            >
+                              Cancel
+                            </Button>
+
+                            <Button type='submit'>Create</Button>
+                          </div>
+                        </form>
                       </div>
-                    </form>
-                  </div>
+                    </TabsContent>
+                  </Tabs>
                 )}
               </div>
             </div>
