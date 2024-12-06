@@ -15,6 +15,8 @@ import {
   SearchX
 } from 'lucide-react'
 import Footer from '@/components/Footer'
+import { YouTubeEmbed } from '@/components/YoutubeEmbed'
+import { TwitterEmbed } from '@/components/TweetEmbed'
 
 type AllTagsProps = {
   _id: string
@@ -32,7 +34,7 @@ const iconMap: { [key: string]: React.ElementType } = {
 export default function SharedContent () {
   const { hash } = useParams<{ hash: string }>() // Extract the hash from URL
   const [content, setContent] = useState<{
-    user: {_id: string, username: string},
+    user: { _id: string; username: string }
     sharedContents: any
   } | null>(null) // State to store fetched content
   const [loading, setLoading] = useState<boolean>(true)
@@ -75,46 +77,52 @@ export default function SharedContent () {
   }, [hash]) // Dependency array ensures this runs when the hash changes
 
   // const findTag = (id: string) => {
-    // const inpTagId = alltags.find(tag => tag._id === id)
-    // if (inpTagId) {
-    // Add to selected tags if it exists
-    //   setSelectedTags([...selectedTags, inpTagId.title])
-    // console.log('selected tag:', selectedTags)
-    // setAlltagsId([...alltagsId, existingTag._id])
-    // console.log('all tags id : ', alltagsId)
-    // } else {
-    // Add new tag to the database
-    // console.log('find tag ka else wala part')
-    // }
+  // const inpTagId = alltags.find(tag => tag._id === id)
+  // if (inpTagId) {
+  // Add to selected tags if it exists
+  //   setSelectedTags([...selectedTags, inpTagId.title])
+  // console.log('selected tag:', selectedTags)
+  // setAlltagsId([...alltagsId, existingTag._id])
+  // console.log('all tags id : ', alltagsId)
+  // } else {
+  // Add new tag to the database
+  // console.log('find tag ka else wala part')
+  // }
   // }
 
-  if (loading) return (<div className='w-full h-screen flex flex-col justify-center items-center text-sm md:text-lg '>
- <Loader2 className='animate-spin'/>
-</div>)
-  if (!content) return (<div className='w-full h-screen flex flex-col justify-center items-center text-sm md:text-lg '>
-  <SearchX /> Content not found or invalid link
-</div>)
+  if (loading)
+    return (
+      <div className='w-full h-screen flex flex-col justify-center items-center text-sm md:text-lg '>
+        <Loader2 className='animate-spin' />
+      </div>
+    )
+  if (!content)
+    return (
+      <div className='w-full h-screen flex flex-col justify-center items-center text-sm md:text-lg '>
+        <SearchX /> Content not found or invalid link
+      </div>
+    )
 
   return (
-    <div className="min-h-screen flex flex-col items-center mx-auto bg-transparent max-w-6xl rounded-md w-screen">
-    {/* Header Section */}
-    <div className="p-10 md:p-10 bg-transparent flex flex-col items-center gap-2">
-      <h1 className="text-xl md:text-3xl bg-gradient-to-tr from-purple-300/80 to-white/90 bg-clip-text text-transparent">
-        {`${content.user.username}'s brain`}
-      </h1>
-      <Separator />
+    <div className='min-h-screen flex flex-col items-center mx-auto bg-transparent max-w-7xl rounded-md w-screen'>
+      {/* Header Section */}
+      <div className='p-10 md:p-10 bg-transparent flex flex-col items-center gap-2'>
+        <h1 className='text-xl md:text-3xl bg-gradient-to-tr from-purple-300/80 to-white/90 bg-clip-text text-transparent'>
+          {`${content.user.username}'s brain`}
+        </h1>
+        <Separator />
+      </div>
+
+      {/* Main Content Section */}
+      <div className='w-full flex-grow  flex justify-center'>
+        <SharedCard contents={content.sharedContents} alltags={alltags} />
+      </div>
+
+      {/* Footer Section */}
+      <div className='mt-auto w-full'>
+        <Footer />
+      </div>
     </div>
-  
-    {/* Main Content Section */}
-    <div className="w-full flex-grow  flex justify-center">
-      <SharedCard contents={content.sharedContents} alltags={alltags} />
-    </div>
-  
-    {/* Footer Section */}
-    <div className="mt-auto w-full">
-      <Footer />
-    </div>
-  </div>
   )
 }
 
@@ -164,6 +172,62 @@ const SharedCard = ({
     return `${day}/${month}/${year}`
   }
 
+  const isYoutubeVid = (thoughtLink: string): boolean => {
+    const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/
+    if (!youtubeRegex.test(thoughtLink)) {
+      return false
+    } else {
+      const videoId = getYouTubeVideoId(thoughtLink)
+      if (!videoId) {
+        return false
+      }
+    }
+    return true
+  }
+
+  const getYouTubeVideoId = (url: string): string | null => {
+    const regExp =
+      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
+    const match = url.match(regExp)
+    return match && match[2].length === 11 ? match[2] : null
+  }
+
+  const isTweet = (thoughtLink: string): boolean => {
+    const twitterRegExp =
+      /^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/
+    const xRegExp = /^https?:\/\/x\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/
+    if (twitterRegExp.test(thoughtLink) || xRegExp.test(thoughtLink)) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  const getTweetId = (url: string): string | null => {
+    const regExp =
+      /^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/
+    const match = url.match(regExp)
+    if (match) {
+      console.log('twitter reg match: ', match)
+      // setTweetUser(match[1])
+      return match ? match[3] : null
+    } else {
+      const regExp_newformate =
+        /^https?:\/\/x\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/
+      const match_newformate = url.match(regExp_newformate)
+      // match_newformate && setTweetUser(match_newformate[1])
+      return match_newformate ? match_newformate[3] : null
+    }
+  }
+
+  const refineTweetUrl = (url: string) => {
+    const xComPattern = /^https?:\/\/(www\.)?x\.com/
+    if (xComPattern.test(url)) {
+      return url.replace(xComPattern, 'https://twitter.com')
+    }
+    return url
+  }
+
   return (
     <div className=''>
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 bg-slate-700/10 p-5 rounded-lg min-h-96'>
@@ -173,7 +237,7 @@ const SharedCard = ({
           return (
             <div
               key={index}
-              className='border border-black/[0.2] bg-gradient-to-tr from-purple-400/10 to-transparent/5 dark:border-white/[0.2] flex flex-col items-start  relative min-h-96 w-80 px-5 '
+              className='border border-black/[0.2] bg-gradient-to-tr from-purple-400/10 to-transparent/5 dark:border-white/[0.2] flex flex-col items-start  relative min-h-96 w-full px-5 '
             >
               <Icon className='absolute h-6 w-6 -top-3 -left-3 dark:text-white text-black' />
               <Icon className='absolute h-6 w-6 -bottom-3 -left-3 dark:text-white text-black' />
@@ -195,10 +259,25 @@ const SharedCard = ({
                   </a>
                 </div>
                 <Separator />
-                <div className='bg-purple-300/10 rounded-sm min-h-64 p-3 mt-2 overflow-hidden'>
-                  <div className='line-clamp-[10] overflow-hidden text-ellipsis'>
-                    {content.description}
-                  </div>
+                <div className=''>
+                  {isYoutubeVid(content.link) ? (
+                    <div className='bg-purple-300/10 rounded-sm min-h-64 p-3 mt-2 overflow-hidden'>
+                      <div className='line-clamp-[10] overflow-hidden text-ellipsis'>
+                        {content.description}
+                        <YouTubeEmbed url={content.link} />
+                      </div>
+                    </div>
+                  ) : isTweet(content.link) ? (
+                    <div>
+                      <TwitterEmbed tweetUrl={refineTweetUrl(content.link)} />
+                    </div>
+                  ) : (
+                    <div className='bg-purple-300/10 rounded-sm min-h-64 p-3 mt-2 overflow-hidden'>
+                      <div className='line-clamp-[10] overflow-hidden text-ellipsis'>
+                        {content.description}
+                      </div>
+                    </div>
+                  )}
                 </div>
                 {/* <div className='text-gray-400'>{content.tags.map((tagId:string, index:number) => <div key={index}>{tagId}</div>)}</div> */}
                 {/* <div className='text-gray-400'>{content.tags.map((tagId:string, index:number) => <div key={index}>{tagId}</div>)}</div> */}
