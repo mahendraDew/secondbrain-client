@@ -16,6 +16,7 @@ import { ApiRoutes } from '@/utils/routeAPI'
 import { useState } from 'react'
 import { ThoughtCardType } from './type/thougthtype'
 import { YouTubeEmbed } from './YoutubeEmbed'
+import { TwitterEmbed } from './TweetEmbed'
 
 type Type = {
   _id: string
@@ -94,7 +95,7 @@ export default function Thoughtcard ({
 
     }
     return true;
-  }
+  };
 
   const getYouTubeVideoId = (url: string): string | null => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -103,7 +104,49 @@ export default function Thoughtcard ({
   };
 
 
+  const isTweet = (thoughtLink: string): boolean => {
+    // console.log('this is tweet')
+    const twitterRegExp = /^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/;
+    const xRegExp = /^https?:\/\/x\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/;
+    if (twitterRegExp.test(thoughtLink) || xRegExp.test(thoughtLink)) {
+      // console.log("its tweet:", thoughtLink)
+      // const tweetId = getTweetId(thoughtLink);
+      // if(!tweetId){
+      //     console.log("not tweet: ", thoughtLink)
+      //     return false;
+      //   }
+      return true;
+    }else {
+      // console.log("not tweet: ", thoughtLink);
+      return false;
 
+    }
+   
+  }
+
+    // const [tweetUser, setTweetUser] = useState('')
+    const getTweetId = (url: string): string | null => {
+      const regExp = /^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/
+      const match = url.match(regExp)
+      if (match) {
+        console.log('twitter reg match: ', match)
+        // setTweetUser(match[1])
+        return match ? match[3] : null
+      } else {
+        const regExp_newformate = /^https?:\/\/x\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/
+        const match_newformate = url.match(regExp_newformate)
+        // match_newformate && setTweetUser(match_newformate[1])
+        return match_newformate ? match_newformate[3] : null
+      }
+    }
+
+    const refineTweetUrl = (url: string) => {
+      const xComPattern = /^https?:\/\/(www\.)?x\.com/;
+      if (xComPattern.test(url)) {
+          return url.replace(xComPattern, 'https://twitter.com');
+      }
+      return url;
+  };
   
 
   return (
@@ -157,7 +200,11 @@ export default function Thoughtcard ({
                   <CardContent>
                     <Separator className='mb-5' />
                     <p className='mb-2'>{thought.description}</p>
-                    {isYoutubeVid(thought.link) && <div><YouTubeEmbed url={thought.link} /></div>}
+                    <div >
+                      {isYoutubeVid(thought.link) && <div><YouTubeEmbed url={thought.link} /></div>}
+                    
+                      {isTweet(thought.link) && <div><TwitterEmbed tweetUrl={refineTweetUrl(thought.link)} /></div>}
+                    </div>
                     <div className='flex gap-2 mt-5 flex-wrap'>
                       {thought.tags &&
                         thought.tags.map((tag, idx) => (

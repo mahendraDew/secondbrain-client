@@ -34,7 +34,6 @@ import { useNavigate } from 'react-router-dom'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-
 export function DashboardComp () {
   const navigate = useNavigate()
   const links = [
@@ -68,12 +67,11 @@ export function DashboardComp () {
         <FileText className='text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0' />
       )
     }
-   
   ]
   const [open, setOpen] = useState(false)
   const userData = JSON.parse(localStorage.getItem('user') || '{}') // Replace with your key
 
-  const [selectedType, setSelectedType] = useState<ThoughtCardType>(null);
+  const [selectedType, setSelectedType] = useState<ThoughtCardType>(null)
 
   const [signOutConfirmationModel, setSignOutConfirmationModel] =
     useState(false)
@@ -100,7 +98,12 @@ export function DashboardComp () {
             {open ? <Logo /> : <LogoIcon />}
             <div className='mt-8 flex flex-col gap-2 '>
               {links.map((link, idx) => (
-                <SidebarLink key={idx} link={link} selectedType={selectedType} onSelectType={setSelectedType}/>
+                <SidebarLink
+                  key={idx}
+                  link={link}
+                  selectedType={selectedType}
+                  onSelectType={setSelectedType}
+                />
               ))}
             </div>
           </div>
@@ -163,7 +166,10 @@ export function DashboardComp () {
           </div>
         </div>
       )}
-      <Dashboard selectedType={selectedType} setSelectedType={setSelectedType}/>
+      <Dashboard
+        selectedType={selectedType}
+        setSelectedType={setSelectedType}
+      />
     </div>
   )
 }
@@ -202,7 +208,13 @@ export const LogoIcon = () => {
 }
 
 // Dummy dashboard component with content
-const Dashboard = ({selectedType, setSelectedType}: {selectedType: ThoughtCardType, setSelectedType: React.Dispatch<React.SetStateAction<ThoughtCardType>>}) => {
+const Dashboard = ({
+  selectedType,
+  setSelectedType
+}: {
+  selectedType: ThoughtCardType
+  setSelectedType: React.Dispatch<React.SetStateAction<ThoughtCardType>>
+}) => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -337,8 +349,8 @@ const Dashboard = ({selectedType, setSelectedType}: {selectedType: ThoughtCardTy
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+    e.preventDefault()
+
     // Validate form fields
     let newErrors: { [key: string]: string } = {}
     if (!title.trim()) {
@@ -353,24 +365,24 @@ const Dashboard = ({selectedType, setSelectedType}: {selectedType: ThoughtCardTy
     if (alltagsId.length <= 0) {
       newErrors.tag = 'Add atleast one tag.'
     }
-    
+
     if (Object.keys(newErrors).length > 0) {
       setValidateFormErr(newErrors)
       return
     }
-    
+
     const userData = JSON.parse(localStorage.getItem('user') || '{}') // Replace with your key
     const userId = userData ? userData.id : null
-    
+
     console.log('type:', type)
     console.log(type)
-    
+
     if (type === undefined || type === '' || type === null) {
       setType('article')
     }
     console.log({ title, description, date, alltagsId, type, link, userId })
     setCreateCardLoading(true)
-    
+
     const newcontent = {
       title,
       description,
@@ -605,154 +617,289 @@ const Dashboard = ({selectedType, setSelectedType}: {selectedType: ThoughtCardTy
     shareRequest(true)
   }
 
-
   //-------------------------------------------------import stuff------------------------------------------
 
-  const [importLink, setImportLink] = useState('');
+  const [importLink, setImportLink] = useState('')
 
   const ImportLinkSubmit = async (e: React.FormEvent) => {
-    console.log("ImportLinkSubmit called");
+    console.log('ImportLinkSubmit called')
     e.preventDefault()
-    
-    
-    
-    // here we have to check if the import link is yt link or x link 
-    const youtubeVideoId = getYouTubeVideoId(importLink);
-    // const tweetId = getTweetId(importLink);
 
+    // here we have to check if the import link is yt link or x link
+    const youtubeVideoId = getYouTubeVideoId(importLink)
+    const tweetId = getTweetId(importLink)
+    let newErrors: { [key: string]: string } = {}
 
-    if(youtubeVideoId){
+    if (youtubeVideoId) {
       // Validate form fields
-      let newErrors: { [key: string]: string } = {}
       if (!importLink.trim() || !isValidURL(importLink)) {
         newErrors.importLink = 'A valid import link is required.'
       }
       if (importLink.trim() === '') {
-        newErrors.importLink = 'Please enter a YouTube URL';
+        newErrors.importLink = 'Please enter a YouTube URL'
       }
-      const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
+      const youtubeRegex =/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
       if (!youtubeRegex.test(importLink)) {
-        newErrors.importLink = 'Please enter a valid YouTube URL';
+        newErrors.importLink = 'Please enter a valid YouTube URL'
       }
-      const videoId = getYouTubeVideoId(importLink);
+      const videoId = getYouTubeVideoId(importLink)
       if (!videoId) {
-        newErrors.importLink = 'Invalid YouTube URL';
+        newErrors.importLink = 'Invalid YouTube URL'
       }
       if (Object.keys(newErrors).length > 0) {
         setValidateFormErr(newErrors)
         setTimeout(() => {
-          setValidateFormErr({});
-        }, 3000);
+          setValidateFormErr({})
+        }, 3000)
         return
       }
 
-      try {
-        const videoDetails = videoId ? await fetchVideoDetails(videoId) : { title: '', description: '' };
-        const { title, description } = videoDetails;        
+      // try {
+      const videoDetails = videoId
+        ? await fetchVideoDetails(videoId)
+        : { title: '', description: '' }
+      const { title, description } = videoDetails
 
-        const userData = JSON.parse(localStorage.getItem('user') || '{}') // Replace with your key
-        const userId = userData ? userData.id : null
-        const tagId = addingFixedTags("youtube");
-        const alltagId: string[] = [];
-        if(tagId){
-          alltagId[0] = tagId;
-        }
-        
-        console.log({ title, description, date, alltagsId:alltagId, type: 'video', link:importLink, userId })
-        setCreateCardLoading(true)
-        
-        const newcontent = {
-          title,
-          description,
-          link:importLink,
-          type: "video",
-          tags: alltagId,
-          userId
-        }
-  
-        try {
-          // Call the backend endpoint
-          const config = {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          }
-          const response = await axios.post(ApiRoutes.create, newcontent, config)
-          const data = await response.data
-          if (response.status === 201) {
-            setThoughtData(prevThought => [...prevThought, data]) // Using functional update here
-            setNewDataUpdated(c => c + 1)
-            onClose()
-          } else {
-            // Handle server errors
-            const errorData = await response.data
-            alert(`Error: ${errorData.message || 'Submission failed'}`)
-          }
-        } catch (error) {
-          console.log('Error submitting the form:', error)
-          alert('An unexpected error occurred. Please try again.')
-        }
-  
-        setTitle('')
-        setDescription('')
-        setAlltagsId([]), setType('')
-        setLink('')
-        setValidateFormErr({})
-        // setCreateCardLoading(false)
-        onClose()
-        setImportLink('');
-        
-      } catch (err) {
-        console.error('Error adding video:', err);
-        newErrors.importLink = 'Error adding video. Please try again.';
-        if (Object.keys(newErrors).length > 0) {
-          setValidateFormErr(newErrors)
-          setTimeout(() => {
-            setValidateFormErr({});
-          }, 3000);
-          return
-        }
+      const userData = JSON.parse(localStorage.getItem('user') || '{}') // Replace with your key
+      const userId = userData ? userData.id : null
+      const tagId = addingFixedTags('youtube')
+      const alltagId: string[] = []
+      if (tagId) {
+        alltagId[0] = tagId
       }
 
+      console.log({
+        title,
+        description,
+        date,
+        alltagsId: alltagId,
+        type: 'video',
+        link: importLink,
+        userId
+      })
+      setCreateCardLoading(true)
+
+      const newcontent = {
+        title,
+        description,
+        link: importLink,
+        type: 'video',
+        tags: alltagId,
+        userId
+      }
+
+      try {
+        // Call the backend endpoint
+        const config = {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+        const response = await axios.post(ApiRoutes.create, newcontent, config)
+        const data = await response.data
+        if (response.status === 201) {
+          setThoughtData(prevThought => [...prevThought, data]) // Using functional update here
+          setNewDataUpdated(c => c + 1)
+          onClose()
+        } else {
+          // Handle server errors
+          const errorData = await response.data
+          alert(`Error: ${errorData.message || 'Submission failed'}`)
+        }
+      } catch (error) {
+        console.log('Error submitting the form:', error)
+        alert('An unexpected error occurred. Please try again.')
+      }
+
+      setTitle('')
+      setDescription('')
+      setAlltagsId([]), setType('')
+      setLink('')
+      setValidateFormErr({})
+      setCreateCardLoading(false)
+      onClose()
+      setImportLink('')
+
+      // } catch (err) {
+      //   console.error('Error adding video:', err);
+      //   newErrors.importLink = 'Error adding video. Please try again.';
+      //   if (Object.keys(newErrors).length > 0) {
+      //     setValidateFormErr(newErrors)
+      //     setTimeout(() => {
+      //       setValidateFormErr({});
+      //     }, 3000);
+      //     return
+      //   }
+      // }
+    } else if (tweetId) {
+      console.log('this is tweet>>>>>>>>')
+      // await fetchTweetText(tweetId);
+      // const title = await getTweetId(tweetId);
+      // console.log("tweet title: ",title);
+
+      // Validate form fields
+      if (!importLink.trim() || !isValidURL(importLink)) {
+        newErrors.importLink = 'A valid import link is required.'
+      }
+      if (importLink.trim() === '') {
+        newErrors.importLink = 'Please enter a Twitter URL'
+      }
+      // const twitterRegExp = /^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/;
+      // const xRegExp = /^https?:\/\/x\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/;
+      // if (!twitterRegExp.test(importLink)) {
+      //   newErrors.importLink = 'Please enter a Tweet URL'
+      // }
+      // if (!xRegExp.test(importLink)) {
+      //   newErrors.importLink = 'Please enter a Tweet URL'
+      // }
+      // const tweetId = getTweetId(importLink);
+      if (!tweetId) {
+        newErrors.importLink = 'Invalid Tweet URL'
+      }
+      if (Object.keys(newErrors).length > 0) {
+        setValidateFormErr(newErrors)
+        setTimeout(() => {
+          setValidateFormErr({})
+        }, 3000)
+        return
+      }
+
+      const userData = JSON.parse(localStorage.getItem('user') || '{}') // Replace with your key
+      const userId = userData ? userData.id : null
+      const tagId = addingFixedTags('tweet')
+      const alltagId: string[] = []
+      if (tagId) {
+        alltagId[0] = tagId
+      }
+
+      const tweetUsername = importLink.split('/')[3];
+      console.log("tweet username: ", tweetUsername)
+      
+      const title = tweetUsername + "'s tweet"
+      const description = " ";
+
+      console.log({
+        title:title,
+        description:description,
+        date,
+        alltagsId: alltagId,
+        type: 'tweet',
+        link: importLink,
+        userId
+      })
+      setCreateCardLoading(true)
+
+      const newcontent = {
+        title:title,
+        description:description,
+        link: importLink,
+        type: 'tweet',
+        tags: alltagId,
+        userId
+      }
+
+      try {
+        // Call the backend endpoint
+        const config = {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+        const response = await axios.post(ApiRoutes.create, newcontent, config)
+        const data = await response.data
+        if (response.status === 201) {
+          setThoughtData(prevThought => [...prevThought, data]) // Using functional update here
+          setNewDataUpdated(c => c + 1)
+          onClose()
+        } else {
+          // Handle server errors
+          const errorData = await response.data
+          alert(`Error: ${errorData.message || 'Submission failed'}`)
+        }
+      } catch (error) {
+        console.log('Error submitting the form:', error)
+        alert('An unexpected error occurred. Please try again.')
+      }
+
+      setTitle('')
+      setDescription('')
+      setAlltagsId([]), setType('')
+      setLink('')
+      setValidateFormErr({})
+      setCreateCardLoading(false)
+      onClose()
+      setImportLink('')
+    } else {
+      newErrors.importLink =
+        'Invalid URL. Please enter a valid YouTube or Twitter URL.'
+      if (Object.keys(newErrors).length > 0) {
+        setValidateFormErr(newErrors)
+        setTimeout(() => {
+          setValidateFormErr({})
+        }, 3000)
+        return
+      }
     }
-    
+
     // console.log("Import link:",importLink)
     // setCreateCardLoading(true);
-
-    
+  }
+  // const [tweetUser, setTweetUser] = useState('')
+  const getTweetId = (url: string): string | null => {
+    const regExp = /^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/
+    const match = url.match(regExp)
+    if (match) {
+      console.log('twitter reg match: ', match)
+      // setTweetUser(match[1])
+      return match ? match[3] : null
+    } else {
+      const regExp_newformate = /^https?:\/\/x\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/
+      const match_newformate = url.match(regExp_newformate)
+      // match_newformate && setTweetUser(match_newformate[1])
+      return match_newformate ? match_newformate[3] : null
+    }
   }
 
   const getYouTubeVideoId = (url: string): string | null => {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    const match = url.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : null;
-  };
+    const regExp =
+      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
+    const match = url.match(regExp)
+    return match && match[2].length === 11 ? match[2] : null
+  }
 
-  const fetchVideoDetails = async (videoId: string): Promise<{ title: string; description: string }> => {
+  const fetchVideoDetails = async (
+    videoId: string
+  ): Promise<{ title: string; description: string }> => {
     try {
-      const response = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${videoId}`);
-      const data = await response.json();
-      const title = data.title || `YouTube Video (${videoId})`;
-      const fullDescription = data.author_name + "'s youtube video on - " + title || '';
-      const description = fullDescription.split('\n').slice(0, 5).join('\n');
-      return { title, description };
+      const response = await fetch(
+        `https://noembed.com/embed?url=https://www.youtube.com/watch?v=${videoId}`
+      )
+      const data = await response.json()
+      const title = data.title || `YouTube Video (${videoId})`
+      const fullDescription =
+        data.author_name + "'s youtube video on - " + title || ''
+      const description = fullDescription.split('\n').slice(0, 5).join('\n')
+      return { title, description }
     } catch (error) {
-      console.error('Error fetching video details:', error);
-      return { title: `You"3Blue1Brown's youtube video on - Transformers (how LLMs work) explained visually | DL5"Tube Video (${videoId})`, description: '' };
+      console.error('Error fetching video details:', error)
+      return {
+        title: `You"3Blue1Brown's youtube video on - Transformers (how LLMs work) explained visually | DL5"Tube Video (${videoId})`,
+        description: ''
+      }
     }
-  };
+  }
 
   const addingFixedTags = (fixtag: string) => {
-    console.log("addeing fix tag fun called")
+    console.log('addeing fix tag fun called')
     const existingTag = alltags.find(
       tag => tag.title === fixtag.trim().toLowerCase()
     )
     if (existingTag) {
       // Add to selected tags if it exists
-      console.log("tag is : ",existingTag.title , existingTag._id)
-      return existingTag._id;
-    } 
-  } 
+      console.log('tag is : ', existingTag.title, existingTag._id)
+      return existingTag._id
+    }
+  }
 
   return (
     <div className='flex flex-1'>
@@ -777,13 +924,18 @@ const Dashboard = ({selectedType, setSelectedType}: {selectedType: ThoughtCardTy
               </Button>
             </div>
           </div>
-          {selectedType && <div className='flex items-center gap-2 text-md'>
-            <div className='bg-purple-200/10 rounded-full px-3 flex justify-center items-center gap-1'>
-              <Filter className='w-4 h-4'/> 
-              {selectedType} 
-              <X className='h-4 w-4 text-red-700 hover:text-red-300 cursor-pointer' onClick={() => setSelectedType(null)}/> 
+          {selectedType && (
+            <div className='flex items-center gap-2 text-md'>
+              <div className='bg-purple-200/10 rounded-full px-3 flex justify-center items-center gap-1'>
+                <Filter className='w-4 h-4' />
+                {selectedType}
+                <X
+                  className='h-4 w-4 text-red-700 hover:text-red-300 cursor-pointer'
+                  onClick={() => setSelectedType(null)}
+                />
+              </div>
             </div>
-            </div>}
+          )}
           {isCreateModalOpen && (
             <div
               className='fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300'
@@ -826,7 +978,7 @@ const Dashboard = ({selectedType, setSelectedType}: {selectedType: ThoughtCardTy
                         <form
                           onSubmit={ImportLinkSubmit}
                           className='text-white px-4 sm:px-6 md:px-8 lg:px-10 py-4'
-                        > 
+                        >
                           {/* Import Link */}
                           <div className='mb-4'>
                             <label className='block text-sm font-medium text-gray-50 mb-1'>
@@ -845,9 +997,15 @@ const Dashboard = ({selectedType, setSelectedType}: {selectedType: ThoughtCardTy
                                 {validateFormErr.importLink}
                               </p>
                             )}
-                            <Button className='mt-3 w-full ' disabled={importLink ? false : true} type='submit'>Import</Button>
+                            <Button
+                              className='mt-3 w-full '
+                              disabled={importLink ? false : true}
+                              type='submit'
+                            >
+                              Import
+                            </Button>
                           </div>
-                         
+
                           {/* Title */}
                           {/* <div className='mb-4'>
                             <label className='block text-sm font-medium text-gray-500 mb-1'>
@@ -1415,13 +1573,17 @@ const DashboardContent = ({
   setThoughtData,
   selectedType
 }: {
-  thoughtData: ThoughtProp[],
-  setThoughtData: React.Dispatch<React.SetStateAction<ThoughtProp[]>>,
-  selectedType:ThoughtCardType;
+  thoughtData: ThoughtProp[]
+  setThoughtData: React.Dispatch<React.SetStateAction<ThoughtProp[]>>
+  selectedType: ThoughtCardType
 }) => {
   return (
     <div className='h-full w-full rounded-lg  '>
-      <Thoughtcard thoughts={thoughtData} setThoughtData={setThoughtData} selectedType={selectedType}/>
+      <Thoughtcard
+        thoughts={thoughtData}
+        setThoughtData={setThoughtData}
+        selectedType={selectedType}
+      />
     </div>
   )
 }
