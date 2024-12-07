@@ -125,20 +125,20 @@ export default function Thoughtcard ({
   }
 
     // const [tweetUser, setTweetUser] = useState('')
-    const getTweetId = (url: string): string | null => {
-      const regExp = /^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/
-      const match = url.match(regExp)
-      if (match) {
-        console.log('twitter reg match: ', match)
-        // setTweetUser(match[1])
-        return match ? match[3] : null
-      } else {
-        const regExp_newformate = /^https?:\/\/x\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/
-        const match_newformate = url.match(regExp_newformate)
-        // match_newformate && setTweetUser(match_newformate[1])
-        return match_newformate ? match_newformate[3] : null
-      }
-    }
+    // const getTweetId = (url: string): string | null => {
+    //   const regExp = /^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/
+    //   const match = url.match(regExp)
+    //   if (match) {
+    //     console.log('twitter reg match: ', match)
+    //     // setTweetUser(match[1])
+    //     return match ? match[3] : null
+    //   } else {
+    //     const regExp_newformate = /^https?:\/\/x\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/
+    //     const match_newformate = url.match(regExp_newformate)
+    //     // match_newformate && setTweetUser(match_newformate[1])
+    //     return match_newformate ? match_newformate[3] : null
+    //   }
+    // }
 
     const refineTweetUrl = (url: string) => {
       const xComPattern = /^https?:\/\/(www\.)?x\.com/;
@@ -151,8 +151,8 @@ export default function Thoughtcard ({
 
   return (
     <div className='h-full '>
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5  '>
-        {/* <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 bg-red-400 '> */}
+      <div className='columns-1 md:columns-2 lg:columns-3 gap-1 w-full rounded-lg '>
+      {/* <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 bg-red-400 '> */}
         {thoughts
           .slice()
           .reverse()
@@ -171,56 +171,60 @@ export default function Thoughtcard ({
             if (!selectedType || thought.type === selectedType) {
               // console.log("selectedType is: ", selectedType + thought.type)
               return (
-                <Card className='shadow-sm' key={index}>
-                  <CardHeader className='flex flex-row items-start justify-between space-y-0 pb-2'>
-                    <div className='flex flex-shrink-0 items-center text-center gap-2 pt-2 pr-3 pl-0'>
-                      {/* <FileText className='h-4 w-4' /> */}
-                      <IconComponent className='h-4 w-4' />{' '}
-                      {/* Render the corresponding icon */}
-                    </div>
-                    <div className='w-full pt-1'>
-                    <h3 className='font-medium  text-left w-full'>{thought.title}</h3>
-                    </div>
-                    <div className='flex flex-shrink-0 gap-2  pt-0'>
-                      <a href={thought.link} target='_blank' >
-                        <Button variant='ghost' size='icon' className='h-8 w-8'>
-                          <ArrowUpRight className='h-4 w-4' />
+                <div className='p-3 break-inside-avoid  w-full'>
+                
+                  <Card className='shadow-sm' key={index}>
+                    <CardHeader className='flex flex-row items-start justify-between space-y-0 pb-2'>
+                      <div className='flex flex-shrink-0 items-center text-center gap-2 pt-2 pr-3 pl-0'>
+                        {/* <FileText className='h-4 w-4' /> */}
+                        <IconComponent className='h-4 w-4' />{' '}
+                        {/* Render the corresponding icon */}
+                      </div>
+                      <div className='w-full pt-1'>
+                      <h3 className='font-medium  text-left w-full'>{thought.title}</h3>
+                      </div>
+                      <div className='flex flex-shrink-0 gap-2  pt-0'>
+                        <a href={thought.link} target='_blank' >
+                          <Button variant='ghost' size='icon' className='h-8 w-8'>
+                            <ArrowUpRight className='h-4 w-4' />
+                          </Button>
+                        </a>
+                        <Button
+                          variant='ghost'
+                          size='icon'
+                          className='h-8 w-8 '
+                          onClick={() => removeThought(thought._id, index)}
+                        >
+                          <Trash2 className='h-4 w-4 text-red-600' />
                         </Button>
-                      </a>
-                      <Button
-                        variant='ghost'
-                        size='icon'
-                        className='h-8 w-8 '
-                        onClick={() => removeThought(thought._id, index)}
-                      >
-                        <Trash2 className='h-4 w-4 text-red-600' />
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <Separator className='mb-5' />
-                    <p className='mb-2'>{thought.description}</p>
-                    <div >
-                      {isYoutubeVid(thought.link) && <div><YouTubeEmbed url={thought.link} /></div>}
-                    
-                      {isTweet(thought.link) && <div><TwitterEmbed tweetUrl={refineTweetUrl(thought.link)} /></div>}
-                    </div>
-                    <div className='flex gap-2 mt-5 flex-wrap'>
-                      {thought.tags &&
-                        thought.tags.map((tag, idx) => (
-                          <span
-                            className='text-[#5E43EC] bg-[#5E43EC]/10 px-2 py-1 rounded-md text-sm'
-                            key={idx}
-                          >
-                            #{tag.title}
-                          </span>
-                        ))}
-                    </div>
-                    <div className='text-sm text-muted-foreground mt-4'>
-                      Added on {date.toLocaleDateString()}
-                    </div>
-                  </CardContent>
-                </Card>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <Separator className='mb-5' />
+                      <p className='mb-2'>{thought.description}</p>
+                      <div >
+                        {isYoutubeVid(thought.link) && <div><YouTubeEmbed url={thought.link} /></div>}
+                      
+                        {isTweet(thought.link) && <div className='w-full'><TwitterEmbed tweetUrl={refineTweetUrl(thought.link)} /></div>}
+                      </div>
+                      <div className='flex gap-2 mt-5 flex-wrap'>
+                        {thought.tags &&
+                          thought.tags.map((tag, idx) => (
+                            <span
+                              className='text-[#5E43EC] bg-[#5E43EC]/10 px-2 py-1 rounded-md text-sm'
+                              key={idx}
+                            >
+                              #{tag.title}
+                            </span>
+                          ))}
+                      </div>
+                      <div className='text-sm text-muted-foreground mt-4 '>
+                        Added on {date.toLocaleDateString()}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                </div>
               )
             }
           })}

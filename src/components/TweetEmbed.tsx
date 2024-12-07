@@ -1,5 +1,4 @@
-import { Loader2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 interface TwitterEmbedProps {
   tweetUrl: string;
@@ -17,17 +16,17 @@ declare global {
     }
   }
   export function TwitterEmbed({ tweetUrl }: TwitterEmbedProps) {
-    const [isLoading, setIsLoading] = useState(true);
+    // const [isLoading, setIsLoading] = useState(true);
   
     useEffect(() => {
-      setIsLoading(true);
+      // setIsLoading(true);
       const script = document.createElement('script');
       script.src = 'https://platform.twitter.com/widgets.js';
       script.async = true;
       script.onload = () => {
         if (window.twttr) {
           window.twttr.widgets.load();
-          setTimeout(() => setIsLoading(false), 500); // Add a small delay to ensure the tweet is rendered
+          // setTimeout(() => setIsLoading(false), 500); // Add a small delay to ensure the tweet is rendered
         }
       };
       document.body.appendChild(script);
@@ -47,10 +46,10 @@ declare global {
     // }
   
     return (
-      <div className="twitter-embed">
-        <blockquote className="twitter-tweet" data-dnt="true">
+      <div className="twitter-embed w-full">
+        <blockquote className="twitter-tweet " data-dnt="true">
          <div className='w-full h-32 bg-slate-600/20 animate-pulse'></div> 
-         <a href={tweetUrl}></a>
+         <a href={tweetUrl} className='w-full'></a>
         </blockquote>
       </div>
     );

@@ -177,22 +177,6 @@ const SharedCard = ({
     }
   }
 
-  const getTweetId = (url: string): string | null => {
-    const regExp =
-      /^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/
-    const match = url.match(regExp)
-    if (match) {
-      console.log('twitter reg match: ', match)
-      // setTweetUser(match[1])
-      return match ? match[3] : null
-    } else {
-      const regExp_newformate =
-        /^https?:\/\/x\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/
-      const match_newformate = url.match(regExp_newformate)
-      // match_newformate && setTweetUser(match_newformate[1])
-      return match_newformate ? match_newformate[3] : null
-    }
-  }
 
   const refineTweetUrl = (url: string) => {
     const xComPattern = /^https?:\/\/(www\.)?x\.com/
