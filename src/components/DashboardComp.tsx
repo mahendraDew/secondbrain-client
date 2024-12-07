@@ -963,12 +963,13 @@ const Dashboard = ({
                     </TabsList>
                     <TabsContent value='automatic'>
                       <div>
-                        <h2 className='text-white text-xl mb-4 text-center'>
+                        <h2 className='text-white text-xl text-center'>
                           New Thought
                         </h2>
-                        <p className='text-center text-gray-400'>
+                        <p className='text-center text-gray-200 mb-4'>
                           import your thought before you forget it
                         </p>
+                        <p className='text-gray-400 text-sm text-center'>*NOTE: This only support <a href='https://x.com' target='_blank'> <span className='text-purple-200 italic'>tweet</span></a> and <a href='https://youtube.com' target='_blank'><span className='text-purple-200 italic'>youtube</span></a> link for now </p>
                         <button
                           className='absolute -top-4 -right-6  rounded-full text-xs'
                           onClick={onClose}
@@ -987,7 +988,7 @@ const Dashboard = ({
                             </label>
                             <input
                               type='text'
-                              placeholder='paste your link here'
+                              placeholder='paste your yt/tweet link here'
                               className='w-full px-3 py-2 border border-gray-50 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
                               value={importLink}
                               onChange={e => setImportLink(e.target.value)}
