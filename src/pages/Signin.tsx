@@ -7,7 +7,19 @@ import { useNavigate } from 'react-router-dom';
 import { ApiRoutes } from '@/utils/routeAPI';
 import axios from 'axios';
 
-export default function SignUp() {
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  // Add other fields as needed
+}
+
+interface SignInProps {
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+}
+
+
+export default function SignIn({ setUser }: SignInProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -64,6 +76,7 @@ export default function SignUp() {
         // You might want to store a token or user data in localStorage or context.
         localStorage.setItem('token', data.token); // Example: storing JWT token.
         localStorage.setItem('user', JSON.stringify(data.user))
+        setUser(data.user); // Update the user state in App
         navigate('/home'); // Adjust the redirect as needed.
       } else {
         console.log("else in signin")

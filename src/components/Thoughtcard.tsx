@@ -171,7 +171,7 @@ export default function Thoughtcard ({
             if (!selectedType || thought.type === selectedType) {
               // console.log("selectedType is: ", selectedType + thought.type)
               return (
-                <div className='p-3 break-inside-avoid  w-full'>
+                <div key={index} className='p-3 break-inside-avoid  w-full'>
                 
                   <Card className='shadow-sm' key={index}>
                     <CardHeader className='flex flex-row items-start justify-between space-y-0 pb-2'>

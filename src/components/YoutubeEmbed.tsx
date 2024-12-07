@@ -24,7 +24,7 @@ export function YouTubeEmbed({ url }: {url:string}) {
   const embedUrl = `https://www.youtube.com/embed/${videoId}`;
 
   return (
-    <div className="aspect-w-16 aspect-h-9">
+    <div className="z-0 aspect-w-16 aspect-h-9">
       <iframe
         src={embedUrl}
         // title={title}

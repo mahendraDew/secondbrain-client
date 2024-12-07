@@ -124,7 +124,7 @@ export function DashboardComp () {
       </Sidebar>
       {signOutConfirmationModel && (
         <div
-          className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-55 transition-opacity duration-300'
+          className='fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-55 transition-opacity duration-300'
           onClick={() => setSignOutConfirmationModel(false)} // Close modal when clicking background
         >
           <div
@@ -271,11 +271,12 @@ const Dashboard = ({
   const fetchTags = async () => {
     try {
       const response = await axios.get(ApiRoutes.alltags)
-      console.log(response.data.tags)
+      // console.log(response.data.tags)
       setAllTags(response.data.tags)
       setFilteredTags(response.data.tags)
     } catch (error) {
-      console.error('Error fetching tags:', error)
+      alert("Error fetching tags: (-_-)")
+      // console.log('Error fetching tags:', error)
     }
   }
 
@@ -292,7 +293,7 @@ const Dashboard = ({
   }
 
   const createNewTag = async (newTagtitle: string) => {
-    console.log('create new tag called', newTagtitle)
+    // console.log('create new tag called', newTagtitle)
     try {
       await axios.post(ApiRoutes.createtag, {
         title: newTagtitle.toLowerCase()
@@ -300,7 +301,7 @@ const Dashboard = ({
       // setAllTags([...alltags, { _id: Date.now().toString(), title: newTagtitle.toLowerCase() }]);
       const alltagres = await axios.get(ApiRoutes.alltags)
       setAllTags(alltagres.data.tags)
-      console.log(alltagres.data.tags) //right now this doesnt have anything
+      // console.log(alltagres.data.tags) //right now this doesnt have anything
       setSelectedTags([...selectedTags, newTagtitle.toLowerCase()])
       setFilteredTags([
         ...filteredTags,
@@ -310,10 +311,10 @@ const Dashboard = ({
         ...alltagsId,
         alltagres.data.tags[alltagres.data.tags.length - 1]._id
       ])
-      console.log('all tags id from create new wala elas: ', alltagsId)
+      // console.log('all tags id from create new wala elas: ', alltagsId)
       // setFilteredTags([...filteredTags, newTagtitle.toLowerCase()]);
     } catch (error) {
-      console.error('Error adding tag:', error)
+      alert('Error adding tag: (-_-) try again!!',)
     }
   }
 
@@ -326,16 +327,16 @@ const Dashboard = ({
         tag => tag.title === inputValue.trim().toLowerCase()
       )
       if (existingTag) {
-        console.log('already existed tag,')
-        console.log('existingtag:', existingTag)
+        // console.log('already existed tag,')
+        // console.log('existingtag:', existingTag)
         // Add to selected tags if it exists
         setSelectedTags([...selectedTags, existingTag.title])
-        console.log('selected tag:', selectedTags)
+        // console.log('selected tag:', selectedTags)
         setAlltagsId([...alltagsId, existingTag._id])
-        console.log('all tags id : ', alltagsId)
+        // console.log('all tags id : ', alltagsId)
       } else {
         // Add new tag to the database
-        console.log(inputValue)
+        // console.log(inputValue)
         createNewTag(inputValue.trim())
       }
 
@@ -374,13 +375,13 @@ const Dashboard = ({
     const userData = JSON.parse(localStorage.getItem('user') || '{}') // Replace with your key
     const userId = userData ? userData.id : null
 
-    console.log('type:', type)
-    console.log(type)
+    // console.log('type:', type)
+    // console.log(type)
 
     if (type === undefined || type === '' || type === null) {
       setType('article')
     }
-    console.log({ title, description, date, alltagsId, type, link, userId })
+    // console.log({ title, description, date, alltagsId, type, link, userId })
     setCreateCardLoading(true)
 
     const newcontent = {
@@ -391,7 +392,7 @@ const Dashboard = ({
       tags: alltagsId,
       userId
     }
-    console.log('newcontent:', newcontent)
+    // console.log('newcontent:', newcontent)
 
     try {
       // Call the backend endpoint
@@ -416,8 +417,8 @@ const Dashboard = ({
         alert(`Error: ${errorData.message || 'Submission failed'}`)
       }
     } catch (error) {
-      console.log('Error submitting the form:', error)
-      alert('An unexpected error occurred. Please try again.')
+      // console.log('Error submitting the form:', error)
+      alert('An unexpected error occurred. Please try again. (-_-)')
     }
 
     setTitle('')
@@ -455,11 +456,11 @@ const Dashboard = ({
   }, [])
   const shareBrain = async () => {
     const sharelink = `${linkToCopy}/share/brain/${hashVal}`
-    console.log('sharelink:', sharelink)
+    // console.log('sharelink:', sharelink)
     try {
       await navigator.clipboard.writeText(sharelink)
     } catch (err) {
-      console.log('Failed to copy link:', err)
+      // console.log('Failed to copy link:', err)
       alert('Failed to copy link.')
     }
     setTimeout(() => {
@@ -527,7 +528,7 @@ const Dashboard = ({
       } else {
         // setServerdown(true);
         // console.log('pata nai kya error aaya!')
-        alert('Error: User is not defined')
+        alert('Error: User is not defined! (-_-)')
       }
     }
     fetchUserContents()
@@ -536,13 +537,13 @@ const Dashboard = ({
 
   const handlePublicAccessToggle = () => {
     // e.preventDefault;
-    console.log('handle public access toggle called')
-    console.log('ispublicaccess:', isPublicAccess)
+    // console.log('handle public access toggle called')
+    // console.log('ispublicaccess:', isPublicAccess)
     if (!isPublicAccess) {
       //   setIsConfirmModal(true)
       setIsConfirmationModalOpen(true)
       setIsPublicAccess(true)
-      console.log('confirm?')
+      // console.log('confirm?')
 
       // setIsPublicAccess(true);
     } else {
@@ -550,7 +551,7 @@ const Dashboard = ({
       setIsShareModalOpen(false)
       //   make a req so that share == false
       shareRequest(false)
-      console.log('confirm ka else')
+      // console.log('confirm ka else')
     }
   }
 
@@ -572,7 +573,7 @@ const Dashboard = ({
 
       const res = await axios.post(ApiRoutes.share, shareBody, config)
       const data = await res.data
-      console.log(res)
+      // console.log(res)
       if (
         res.status === 201 ||
         res.status === 200 ||
@@ -584,8 +585,8 @@ const Dashboard = ({
         //   resetForm();
         //   closeCreateModal();
         // const hashval = await res.data
-        console.log('hashval:', data.hashvalue)
-        console.log('hashvalue:', res.data.hashvalue)
+        // console.log('hashval:', data.hashvalue)
+        // console.log('hashvalue:', res.data.hashvalue)
         setHashVal(data.hashvalue)
         // setThoughtData(prevThought => [...prevThought, data]) // Using functional update here
         // setNewDataUpdated(c => c + 1)
@@ -596,8 +597,8 @@ const Dashboard = ({
         alert(`Error: ${errorData.message || 'Submission failed'}`)
       }
     } catch (error) {
-      console.log('Error submitting the form:', error)
-      alert('An unexpected error occurred. Please try again.')
+      // console.log('Error submitting the form:', error)
+      alert('An unexpected error occurred. Please try again. (-_-)')
     }
 
     setShareBtnLoading(false)
@@ -607,7 +608,7 @@ const Dashboard = ({
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
     e.preventDefault
-    console.log('confirm clicked')
+    // console.log('confirm clicked')
     setIsPublicAccess(true)
     setIsConfirmationModalOpen(false)
     // setIsShareModalOpen(true)
@@ -622,7 +623,7 @@ const Dashboard = ({
   const [importLink, setImportLink] = useState('')
 
   const ImportLinkSubmit = async (e: React.FormEvent) => {
-    console.log('ImportLinkSubmit called')
+    // console.log('ImportLinkSubmit called')
     e.preventDefault()
 
     // here we have to check if the import link is yt link or x link
@@ -668,15 +669,15 @@ const Dashboard = ({
         alltagId[0] = tagId
       }
 
-      console.log({
-        title,
-        description,
-        date,
-        alltagsId: alltagId,
-        type: 'video',
-        link: importLink,
-        userId
-      })
+      // console.log({
+      //   title,
+      //   description,
+      //   date,
+      //   alltagsId: alltagId,
+      //   type: 'video',
+      //   link: importLink,
+      //   userId
+      // })
       setCreateCardLoading(true)
 
       const newcontent = {
@@ -707,8 +708,8 @@ const Dashboard = ({
           alert(`Error: ${errorData.message || 'Submission failed'}`)
         }
       } catch (error) {
-        console.log('Error submitting the form:', error)
-        alert('An unexpected error occurred. Please try again.')
+        // console.log('Error submitting the form:', error)
+        alert('An unexpected error occurred. Please try again.(-_-)')
       }
 
       setTitle('')
@@ -732,7 +733,7 @@ const Dashboard = ({
       //   }
       // }
     } else if (tweetId) {
-      console.log('this is tweet>>>>>>>>')
+      // console.log('this is tweet>>>>>>>>')
       // await fetchTweetText(tweetId);
       // const title = await getTweetId(tweetId);
       // console.log("tweet title: ",title);
@@ -773,20 +774,20 @@ const Dashboard = ({
       }
 
       const tweetUsername = importLink.split('/')[3];
-      console.log("tweet username: ", tweetUsername)
+      // console.log("tweet username: ", tweetUsername)
       
       const title = tweetUsername + "'s tweet"
       const description = " ";
 
-      console.log({
-        title:title,
-        description:description,
-        date,
-        alltagsId: alltagId,
-        type: 'tweet',
-        link: importLink,
-        userId
-      })
+      // console.log({
+      //   title:title,
+      //   description:description,
+      //   date,
+      //   alltagsId: alltagId,
+      //   type: 'tweet',
+      //   link: importLink,
+      //   userId
+      // })
       setCreateCardLoading(true)
 
       const newcontent = {
@@ -817,8 +818,8 @@ const Dashboard = ({
           alert(`Error: ${errorData.message || 'Submission failed'}`)
         }
       } catch (error) {
-        console.log('Error submitting the form:', error)
-        alert('An unexpected error occurred. Please try again.')
+        // console.log('Error submitting the form:', error)
+        alert('An unexpected error occurred. Please try again.(-_-)')
       }
 
       setTitle('')
@@ -849,7 +850,7 @@ const Dashboard = ({
     const regExp = /^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/
     const match = url.match(regExp)
     if (match) {
-      console.log('twitter reg match: ', match)
+      // console.log('twitter reg match: ', match)
       // setTweetUser(match[1])
       return match ? match[3] : null
     } else {
@@ -881,7 +882,7 @@ const Dashboard = ({
       const description = fullDescription.split('\n').slice(0, 5).join('\n')
       return { title, description }
     } catch (error) {
-      console.error('Error fetching video details:', error)
+      // console.error('Error fetching video details:', error)
       return {
         title: `You"3Blue1Brown's youtube video on - Transformers (how LLMs work) explained visually | DL5"Tube Video (${videoId})`,
         description: ''
@@ -890,13 +891,13 @@ const Dashboard = ({
   }
 
   const addingFixedTags = (fixtag: string) => {
-    console.log('addeing fix tag fun called')
+    // console.log('addeing fix tag fun called')
     const existingTag = alltags.find(
       tag => tag.title === fixtag.trim().toLowerCase()
     )
     if (existingTag) {
       // Add to selected tags if it exists
-      console.log('tag is : ', existingTag.title, existingTag._id)
+      // console.log('tag is : ', existingTag.title, existingTag._id)
       return existingTag._id
     }
   }
@@ -1260,9 +1261,9 @@ const Dashboard = ({
                               className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
                               value={type}
                               onChange={e => {
-                                console.log('select called')
+                                // console.log('select called')
                                 setType(e.target.value.toLowerCase())
-                                console.log('type:', type.toLowerCase())
+                                // console.log('type:', type.toLowerCase())
                               }}
                             >
                               <option value='tweet' className='bg-slate-950'>
@@ -1412,7 +1413,7 @@ const Dashboard = ({
 
           {isShareModalOpen && (
             <div
-              className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300'
+              className='fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300'
               onClick={onClose} // Close modal when clicking background
             >
               <div
@@ -1437,7 +1438,7 @@ const Dashboard = ({
                     onCheckedChange={handlePublicAccessToggle}
                   />
                 </div>
-                {
+                { isPublicAccess && 
                   <div className='font-mono text-sm text-wrap'>
                     hash: {hashVal}
                   </div>
@@ -1486,7 +1487,7 @@ const Dashboard = ({
 
           {isConfirmationModalOpen && (
             <div
-              className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-55 transition-opacity duration-300'
+              className='fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-55 transition-opacity duration-300'
               onClick={onClose} // Close modal when clicking background
             >
               <div

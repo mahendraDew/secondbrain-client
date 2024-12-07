@@ -9,13 +9,25 @@ import Tos from "./pages/Tos";
 import PrivacyPolicy from "./pages/Privacy";
 // import Test from "./pages/Test";
 import SharedContent from "./pages/SharedContent";
+import { useEffect, useState } from "react";
 
 
 function App() {
+
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem('user');
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
   
-  const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') || '{}') : null; // Check if user data exists in localStorage
+  // const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') || '{}') : null; // Check if user data exists in localStorage
   // console.log("the user from app: ", user);
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
   
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
@@ -27,7 +39,7 @@ function App() {
           <Route path="/" element={<Landing />} />        
           {/* <Route path="/test/:hash" element={<Test />} />         */}
           <Route path="/signup" element={<SignUp />} />        
-          <Route path="/signin" element={<SignIn />} />        
+          <Route path="/signin" element={<SignIn setUser={setUser}/>} />        
           <Route path="/home" element={user? <Dashboard />: <Navigate to='/' />} />        
           <Route path="/share/brain/:hash" element={<SharedContent />} />        
           <Route path="/tos" element={<Tos/>} />        
