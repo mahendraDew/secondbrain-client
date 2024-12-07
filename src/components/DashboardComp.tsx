@@ -34,6 +34,8 @@ import { useNavigate } from 'react-router-dom'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
+import QRcode from 'qrcode'
+
 export function DashboardComp () {
   const navigate = useNavigate()
   const links = [
@@ -275,7 +277,7 @@ const Dashboard = ({
       setAllTags(response.data.tags)
       setFilteredTags(response.data.tags)
     } catch (error) {
-      alert("Error fetching tags: (-_-)")
+      alert('Error fetching tags: (-_-)')
       // console.log('Error fetching tags:', error)
     }
   }
@@ -314,7 +316,7 @@ const Dashboard = ({
       // console.log('all tags id from create new wala elas: ', alltagsId)
       // setFilteredTags([...filteredTags, newTagtitle.toLowerCase()]);
     } catch (error) {
-      alert('Error adding tag: (-_-) try again!!',)
+      alert('Error adding tag: (-_-) try again!!')
     }
   }
 
@@ -558,6 +560,7 @@ const Dashboard = ({
   const [shareBtnLoading, setShareBtnLoading] = useState(false)
 
   const shareRequest = async (share: boolean) => {
+    console.log('sharereq called')
     const shareBody = {
       share: share
     }
@@ -588,6 +591,7 @@ const Dashboard = ({
         // console.log('hashval:', data.hashvalue)
         // console.log('hashvalue:', res.data.hashvalue)
         setHashVal(data.hashvalue)
+        // generateQR(data.hashvalue);
         // setThoughtData(prevThought => [...prevThought, data]) // Using functional update here
         // setNewDataUpdated(c => c + 1)
         // onClose()
@@ -639,7 +643,8 @@ const Dashboard = ({
       if (importLink.trim() === '') {
         newErrors.importLink = 'Please enter a YouTube URL'
       }
-      const youtubeRegex =/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
+      const youtubeRegex =
+        /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/
       if (!youtubeRegex.test(importLink)) {
         newErrors.importLink = 'Please enter a valid YouTube URL'
       }
@@ -773,11 +778,11 @@ const Dashboard = ({
         alltagId[0] = tagId
       }
 
-      const tweetUsername = importLink.split('/')[3];
+      const tweetUsername = importLink.split('/')[3]
       // console.log("tweet username: ", tweetUsername)
-      
+
       const title = tweetUsername + "'s tweet"
-      const description = " ";
+      const description = ' '
 
       // console.log({
       //   title:title,
@@ -791,8 +796,8 @@ const Dashboard = ({
       setCreateCardLoading(true)
 
       const newcontent = {
-        title:title,
-        description:description,
+        title: title,
+        description: description,
         link: importLink,
         type: 'tweet',
         tags: alltagId,
@@ -847,14 +852,16 @@ const Dashboard = ({
   }
   // const [tweetUser, setTweetUser] = useState('')
   const getTweetId = (url: string): string | null => {
-    const regExp = /^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/
+    const regExp =
+      /^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/
     const match = url.match(regExp)
     if (match) {
       // console.log('twitter reg match: ', match)
       // setTweetUser(match[1])
       return match ? match[3] : null
     } else {
-      const regExp_newformate = /^https?:\/\/x\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/
+      const regExp_newformate =
+        /^https?:\/\/x\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)/
       const match_newformate = url.match(regExp_newformate)
       // match_newformate && setTweetUser(match_newformate[1])
       return match_newformate ? match_newformate[3] : null
@@ -901,6 +908,21 @@ const Dashboard = ({
       return existingTag._id
     }
   }
+
+  // -------------------------------------------------- qr code -------------------------------------------
+  const [src, setSrc] = useState<string>('')
+  const [qrLoader, setQRLoader] = useState(false)
+
+  useEffect(() => {
+    setQRLoader(true)
+    const generateQR = () => {
+      console.log('geneerate QR called!', hashVal)
+      const sharelink = `${linkToCopy}/share/brain/${hashVal}`
+      QRcode.toDataURL(sharelink).then(setSrc)
+      setQRLoader(false)
+    }
+    generateQR()
+  }, [hashVal])
 
   return (
     <div className='flex flex-1'>
@@ -969,7 +991,22 @@ const Dashboard = ({
                         <p className='text-center text-gray-200 mb-4'>
                           import your thought before you forget it
                         </p>
-                        <p className='text-gray-400 text-sm text-center'>*NOTE: This only support <a href='https://x.com' target='_blank'> <span className='text-purple-200 italic'>tweet</span></a> and <a href='https://youtube.com' target='_blank'><span className='text-purple-200 italic'>youtube</span></a> link for now </p>
+                        <p className='text-gray-400 text-sm text-center'>
+                          *NOTE: This only support{' '}
+                          <a href='https://x.com' target='_blank'>
+                            {' '}
+                            <span className='text-purple-200 italic'>
+                              tweet
+                            </span>
+                          </a>{' '}
+                          and{' '}
+                          <a href='https://youtube.com' target='_blank'>
+                            <span className='text-purple-200 italic'>
+                              youtube
+                            </span>
+                          </a>{' '}
+                          link for now{' '}
+                        </p>
                         <button
                           className='absolute -top-4 -right-6  rounded-full text-xs'
                           onClick={onClose}
@@ -1007,192 +1044,6 @@ const Dashboard = ({
                               Import
                             </Button>
                           </div>
-
-                          {/* Title */}
-                          {/* <div className='mb-4'>
-                            <label className='block text-sm font-medium text-gray-500 mb-1'>
-                              Title:
-                            </label>
-                            <input
-                              type='text'
-                              className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
-                              value={title}
-                              onChange={e => setTitle(e.target.value)}
-                              
-                            />
-                            {validateFormErr.title && (
-                              <p className='text-sm text-red-500'>
-                                {validateFormErr.title}
-                              </p>
-                            )}
-                          </div> */}
-
-                          {/* Description */}
-                          {/* <div className='mb-4'>
-                            <label className='block text-sm font-medium text-gray-500 mb-1'>
-                              Description:
-                            </label>
-                            <textarea
-                              className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
-                              rows={3}
-                              value={description}
-                              onChange={e => setDescription(e.target.value)}
-                              
-                            ></textarea>
-                            {validateFormErr.description && (
-                              <p className='text-sm text-red-500'>
-                                {validateFormErr.description}
-                              </p>
-                            )}
-                          </div> */}
-
-                          {/* Type Selection */}
-                          {/* <div className='mb-4'>
-                            <label className='block text-sm font-medium text-gray-500 mb-1'>
-                              Type:
-                            </label>
-                            <select
-                              className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
-                              value={type}
-                              onChange={e => {
-                                console.log('select called')
-                                setType(e.target.value.toLowerCase())
-                                console.log('type:', type.toLowerCase())
-                              }}
-                            >
-                              <option value='tweet' className='bg-slate-950'>
-                                Tweet
-                              </option>
-                              <option value='video' className='bg-slate-950'>
-                                Video
-                              </option>
-                              <option value='link' className='bg-slate-950'>
-                                Link
-                              </option>
-                              <option value='image' className='bg-slate-950'>
-                                Image
-                              </option>
-                              <option value='article' className='bg-slate-950'>
-                                Article
-                              </option>
-                            </select>
-                          </div> */}
-
-                          {/* Link */}
-                          {/* <div className='mb-4'>
-                            <label className='block text-sm font-medium text-gray-500 mb-1'>
-                              Ref Link:
-                            </label>
-                            <input
-                              type='text'
-                              className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
-                              value={link}
-                              onChange={e => setLink(e.target.value)}
-                              required
-                            />
-                            {validateFormErr.link && (
-                              <p className='text-sm text-red-500'>
-                                {validateFormErr.link}
-                              </p>
-                            )}
-                          </div> */}
-
-                          {/* Date */}
-                          {/* <div className='mb-4'>
-                            <label className='block text-sm font-medium text-gray-500 mb-1'>
-                              Date:
-                            </label>
-                            <div className='mt-1 w-full px-3 py-2 border rounded-lg shadow-sm bg-transparent dark:text-white'>
-                              {date}
-                            </div>
-                          </div> */}
-
-                          {/* Tags input */}
-                          {/* <div className='mb-4'>
-                            <label className='block text-sm font-medium text-gray-500 mb-1'>
-                              Tags:
-                            </label>
-                            <div className='relative flex flex-col'>
-                              <input
-                                type='text'
-                                className='w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400/40 bg-transparent'
-                                value={inputValue}
-                                onChange={handleInputChange}
-                                onKeyDown={addTag}
-                                placeholder='Add tags and press Enter'
-                              />
-                              {validateFormErr.tag && alltagsId.length <= 0 && (
-                                <p className='text-sm text-red-500 text-left'>
-                                  {validateFormErr.tag}
-                                </p>
-                              )}
-
-                              {inputValue && (
-                                <ul className='bg-slate-950 absolute top-10 border w-full rounded-b-lg max-h-40 overflow-auto'>
-                                  {filteredTags.map(tag => (
-                                    <li
-                                      key={tag._id}
-                                      onClick={() => {
-                                        setSelectedTags([
-                                          ...selectedTags,
-                                          tag.title
-                                        ])
-                                        setAlltagsId([...alltagsId, tag._id])
-                                        setInputValue('')
-                                      }}
-                                      className='px-3 py-2 text-white hover:bg-purple-600 cursor-pointer'
-                                    >
-                                      {tag.title}
-                                    </li>
-                                  ))}
-                                  {filteredTags.length === 0 && (
-                                    <li className='text-gray-400 px-3 py-2'>
-                                      No matching tags
-                                    </li>
-                                  )}
-                                </ul>
-                              )}
-                            </div>
-                            <div className='flex flex-wrap mt-4 gap-2 '>
-                              {selectedTags.map((tag, index) => (
-                                <div
-                                  key={index}
-                                  className='flex items-center bg-purple-400/20 px-2 py-1 rounded-lg text-sm'
-                                >
-                                  {tag}
-                                  <button
-                                    type='button'
-                                    onClick={() => {
-                                      setSelectedTags(
-                                        selectedTags.filter(
-                                          (_, i) => i !== index
-                                        )
-                                      )
-                                      setAlltagsId(
-                                        alltagsId.filter((_, i) => i !== index)
-                                      )
-                                    }}
-                                    className='ml-2 text-red-600 hover:text-red-800'
-                                  >
-                                    &times;
-                                  </button>
-                                </div>
-                              ))}
-                            </div>
-                          </div> */}
-
-                          {/* Submit Button */}
-                          {/* <div className='flex flex-col sm:flex-row justify-end gap-2'>
-                            <Button
-                              onClick={closeCreateModal}
-                              variant={'ghost'}
-                              className='flex justify-center items-center gap-1 text-center rounded-md bg-transparent no-underline cursor-pointer shadow-2xl leading-6  text-white  border-[1px] border-slate-500 px-4 py-2 font-mono font-medium transition-colors hover:text-indigo-300'
-                            >
-                              Cancel
-                            </Button>
-
-                            <Button type='submit'>Create</Button>
-                          </div> */}
                         </form>
                       </div>
                     </TabsContent>
@@ -1439,11 +1290,11 @@ const Dashboard = ({
                     onCheckedChange={handlePublicAccessToggle}
                   />
                 </div>
-                { isPublicAccess && 
+                {isPublicAccess && (
                   <div className='font-mono text-sm text-wrap'>
                     hash: {hashVal}
                   </div>
-                }
+                )}
                 <Separator />
                 <div className='flex flex-col md:flex-row gap-7 mt-2'>
                   <div className='flex flex-col gap-5'>
@@ -1477,8 +1328,20 @@ const Dashboard = ({
                     </div>
                   </div>
                   <div className='flex justify-center items-center'>
-                    <div className='w-64 h-64 md:w-32 md:h-32 bg-black text-center'>
-                      QR code
+                    <div className='w-64 h-64 md:w-32 md:h-32  text-center'>
+                      {isPublicAccess ? (
+                        <div className=' w-full h-full'>
+                          {shareBtnLoading ? (
+                            <div className='w-full h-full bg-slate-600/20 animate-pulse'></div>
+                          ) : (
+                            <img src={src} className='w-full' />
+                          )}
+                        </div>
+                      ) : (
+                        <div className='w-full h-full '>
+                          <BrainCircuit className='w-full h-full text-purple-100' />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -1500,7 +1363,10 @@ const Dashboard = ({
                 </h2>
                 <button
                   className='absolute top-4 right-6  rounded-full text-xs'
-                  onClick={() => setIsConfirmationModalOpen(false)}
+                  onClick={() => {
+                    setIsConfirmationModalOpen(false)
+                    setIsPublicAccess(false)
+                  }}
                 >
                   <X className='h-5 w-5' />
                 </button>
@@ -1515,7 +1381,10 @@ const Dashboard = ({
                       <button
                         type='button'
                         className='inline-flex justify-center px-4 py-2 text-sm font-medium   border border-gray-200 rounded-md hover:bg-gray-200/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-500'
-                        onClick={() => setIsConfirmationModalOpen(false)}
+                        onClick={() => {
+                          setIsConfirmationModalOpen(false)
+                          setIsPublicAccess(false)
+                        }}
                       >
                         Cancel
                       </button>
