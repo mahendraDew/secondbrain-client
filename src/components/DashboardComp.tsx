@@ -911,15 +911,12 @@ const Dashboard = ({
 
   // -------------------------------------------------- qr code -------------------------------------------
   const [src, setSrc] = useState<string>('')
-  const [qrLoader, setQRLoader] = useState(false)
 
   useEffect(() => {
-    setQRLoader(true)
     const generateQR = () => {
       console.log('geneerate QR called!', hashVal)
       const sharelink = `${linkToCopy}/share/brain/${hashVal}`
       QRcode.toDataURL(sharelink).then(setSrc)
-      setQRLoader(false)
     }
     generateQR()
   }, [hashVal])
