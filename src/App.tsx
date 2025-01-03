@@ -7,7 +7,7 @@ import Error from './pages/Error';
 import Dashboard from "./pages/Dashboard";
 import Tos from "./pages/Tos";
 import PrivacyPolicy from "./pages/Privacy";
-// import Test from "./pages/Test";
+import { Analytics } from "@vercel/analytics/react"
 import SharedContent from "./pages/SharedContent";
 import { useEffect, useState } from "react";
 
@@ -47,6 +47,8 @@ function App() {
           <Route path="*" element={<Error />} /> 
           {/* Add more routes as needed */}
         </Routes>
+        <Analytics />
+
       </div>
     </Router>
     </ThemeProvider>
